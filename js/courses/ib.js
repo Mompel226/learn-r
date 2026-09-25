@@ -429,7 +429,7 @@
               '       title = .lr_wrap(paste0("Error bars: ", lab, ", n = 20 a group"))) +',
               THEME
             ].join('\n'), w: 560, h: 380,
-            caption: 'The SD bars overlap a lot. The SE bars do not overlap. The 95 % confidence intervals overlap by about 1 bpm. Yet a t-test (stage 8) gives p = 0.016: a significant difference. __Overlap never decides: a test does.__' },
+            caption: 'The SD bars overlap a lot. The SE bars do not overlap. The 95 % confidence intervals overlap by about 1 bpm. Yet a t-test (stage 8) gives p = 0.016 (stage 6 explains p): a significant difference. __Overlap never decides: a test does.__' },
           { type: 'mcq', id: 'ib-se-mcq', gate: true, q: 'You measure 80 students in each group instead of 20. What happens?',
             opts: [
               { t: 'The SE gets smaller; the SD stays about the same', ok: true, why: 'SE = SD ÷ √n. More students make the mean more precise, but they vary as much as before.' },
@@ -483,13 +483,13 @@
               { title: 'Now 80 heads', show: ['m80'], focus: ['m80', 'tails'],
                 md: '80 heads is far out, beyond the red zone. A fair coin almost never does this.\n\nSo you **reject H₀**: the coin is probably not fair.' },
               { title: 'That is the p-value', show: ['p53', 'p80'],
-                md: 'The **p-value** answers one question: *if H₀ were true, how often would chance give a result at least this far from what H₀ expects?*\n\n- 53 heads: p = 0.62. Chance does this 62 % of the time. Keep H₀.\n- 80 heads: p = 0.000000001. Chance almost never does this. Reject H₀.\n\nThe rule in biology: if **p < 0.05**, reject H₀. The result is *statistically significant*.' },
+                md: 'The **p-value** answers one question: __if the coin were fair, how often would chance alone give a result like yours?__\n\n- 53 heads: p = 0.62, so __62 times in 100__. Chance does this all the time. Keep H₀.\n- 80 heads: p = 0.000000001, about __1 time in a billion__. Reject H₀.\n\nThe rule in biology: p __below 0.05__ (5 times in 100, or 1 in 20) means reject H₀. The result is **statistically significant**.\n\nTo remember it: **if p is low, H₀ must go.** If p is high, H₀ stays.' },
               { title: 'What p < 0.05 does not mean', show: [],
                 md: 'It does not __prove__ anything. Even when H₀ is true, chance gives p < 0.05 one time in 20.\n\nAnd p > 0.05 does not prove H₀ is true. It means only that this evidence is not strong enough.',
                 analogy: 'A court that says *not guilty* has not proved the person innocent. It has decided the evidence was not strong enough.' }
             ] },
           { type: 'concept', title: 'The same idea, in every test',
-            md: 'The χ² test, the t-test and a correlation all work like the coin:\n\n- **H₀** is the boring answer: no difference, no association, no correlation.\n- The test works out how often chance alone would give your result.\n- That is the p-value. If **p < 0.05**, you reject H₀.' },
+            md: 'The χ² test, the t-test and a correlation all work like the coin:\n\n- **H₀** is the boring answer: no difference, no association, no correlation.\n- The test works out how often chance alone would give your result, __if H₀ were true__.\n- That is the p-value. If **p < 0.05**, you reject H₀: *if p is low, H₀ must go*.' },
           { type: 'exercise', id: 'ib-binom', gate: true,
             task: 'R can do the whole coin story in one line: `binom.test(heads, tosses)`. Run it for 53 heads and find the **p-value** in the output. Then change 53 to **80**, run it again, and press **Check my answer**.',
             code: '# 53 heads in 100 tosses: is the coin fair?\nbinom.test(53, 100)',
@@ -592,7 +592,7 @@
               { title: 'How big is big enough?', hide: ['axis', 'labels', 'dotsNo', 'dotsYes', 'means', 'diff', 'sd', 'h0', 'tcalc'], show: ['tdist', 'tcrit'],
                 md: 'If H₀ were true, t would usually be close to 0. With 38 **degrees of freedom** (df = 40 students − 2 groups), t lands beyond ± 2.02 less than 5 % of the time. 2.02 is the **critical value**.\n\nBoth red ends count, because a difference could go either way: training could have lowered heart rate, or raised it. That makes the test **two-tailed**. It is the normal t-test.' },
               { title: 'The decision', show: ['tmark'],
-                md: 't = 2.52 is beyond 2.02, so p < 0.05. R gives __p = 0.016__: reject H₀. The difference is **statistically significant**.' },
+                md: 't = 2.52 is beyond 2.02, so p < 0.05. R gives __p = 0.016__: 16 times in 1,000. Reject H₀. The difference is **statistically significant**. ([What p means](https://nlcsbiology.com/learn-r/ib.html#p-value).)' },
               { title: 'What it does not show', show: ['concl'], focus: ['concl', 'tmark'],
                 md: 'The students chose their own groups, so the test does not show that training __caused__ the lower heart rate. Students with a naturally low heart rate might be more likely to join a team. An experiment that assigns students to groups could test the cause.',
                 analogy: 'Umbrellas and wet streets go together. Umbrellas do not make streets wet: rain causes both.' }
@@ -647,7 +647,7 @@
                 md: 'χ² = Σ (O − E)² ÷ E, added up over the four groups: __42.4__.\n\nSquaring stops the + and − differences cancelling. Dividing by E makes each difference fair.',
                 analogy: '15 more people than expected is a lot at a bus stop where you expect 12, and nothing at a concert where you expect 1,200.' },
               { title: 'Is 42.4 too big for chance?', hide: ['bars', 'calc', 'table', 'exp'], show: ['line'],
-                md: 'Degrees of freedom: (rows − 1) × (columns − 1) = 1. The critical value at p = 0.05 is __3.84__. If H₀ were true, χ² would be above 3.84 less than 1 time in 20.\n\n42.4 is far above it: p < 0.001. Reject H₀.' },
+                md: 'Degrees of freedom: (rows − 1) × (columns − 1) = 1. The critical value at p = 0.05 is __3.84__. If H₀ were true, χ² would be above 3.84 less than 1 time in 20.\n\n42.4 is far above it: p < 0.001, fewer than 1 time in 1,000. Reject H₀. ([What p means](https://nlcsbiology.com/learn-r/ib.html#p-value).)' },
               { title: 'Which way?', show: ['dir'],
                 md: 'Compare O with E. Both species: 57 observed, 42.2 expected. O is bigger: a **positive association**. If they were found together __less__ often than expected, it would be a **negative association**.' },
               { title: 'What it does not show', show: ['cause'], focus: ['cause', 'line'],
@@ -717,7 +717,7 @@
                 md: '**R²** (the coefficient of determination) is __0.25__: 25 % of the variation in resting heart rate is explained by hours of exercise. The other 75 % comes from other things: genes, sleep, stress, how the pulse was taken.',
                 analogy: 'Put all the reasons why heart rates differ into one pie. Exercise is a quarter of the pie.' },
               { title: 'Could it be chance?', show: ['sig'], pan: 'sig',
-                md: '**H₀**: there is no correlation. `cor.test()` gives __p = 0.0009__: less than 0.05, so reject H₀. The correlation is statistically significant.' },
+                md: '**H₀**: there is no correlation. `cor.test()` gives __p = 0.0009__: 9 times in 10,000. Less than 0.05, so reject H₀. The correlation is statistically significant. ([What p means](https://nlcsbiology.com/learn-r/ib.html#p-value).)' },
               { title: 'Correlation is not cause', show: ['cause'], focus: ['cause', 'line'],
                 md: 'Students who exercise more may also sleep, eat or rest differently. A correlation cannot show which causes which.',
                 analogy: 'Ice-cream sales and sunburn rise together. Ice cream does not cause sunburn: summer sun causes both.' }

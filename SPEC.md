@@ -42,6 +42,11 @@ messy stomatal-density data, B3.1.10, cleaned → described → graphed → test
 - The squirrel counts of his C4.1 homework are NOT used (they would give the answer away); the negative
   association is an invented heather–bracken survey.
 
+## The p-value has ONE home: IB stage 6 (the coin)
+Its key step: "if the coin were fair, how often would chance alone give a result like yours?", p as "times in 100",
+and "if p is low, H₀ must go". Later stages quote p as "times in 1,000" and link back to ib.html#p-value in one line.
+Year 8 (no H₀): "low p, significant; high p, not". Never "unlikely to come from chance".
+
 ## The reader
 - IB students fresh from IGCSE, KS3 students aged 12–13; many are Korean EAL learners, many weak at maths.
 - Write to the student: "you", present tense, short sentences, one idea per sentence, British spelling,
