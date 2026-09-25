@@ -164,8 +164,8 @@ stage without saving (teacher read-through); `?reset=1` forgets progress.
 - A story's picture is capped at `100vh − 360px`, so the words and **Next step** stay on screen with it; a click
   keeps the whole block in view. `hide:[…]` lets a picture move on (tally → dots → bars); `pan:'part'` picks what a
   phone scrolls to. Lay out each step's key part inside a ~340-unit-wide window, so a phone shows it whole.
-- Every header (home and course pages) carries "← Biology Hub" at the top left, above the name, as in the Bio English
-  Lab and the Write-Up Lab. The footer never repeats "Made by" (it is in the
+- The top-left link goes ONE level up (Daniel, 26 Sep 2026): the home page says "← Biology Hub"; a course page says
+  "← Learn R" (back to the choice of courses). Same place and look as the Bio English Lab and the Write-Up Lab. The footer never repeats "Made by" (it is in the
   header): it asks for suggestions or corrections by email (Daniel, 26 Sep 2026).
 - A story's words run the full width of the box: no `ch` cap (Daniel, 25 Sep 2026: "make sure they expand the
   whole width available").

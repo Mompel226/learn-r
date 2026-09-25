@@ -50,7 +50,7 @@
     root.innerHTML = '';
     var status = h('div', { class: 'rstat', role: 'status', 'aria-live': 'polite' }, [h('i', { class: 'rstat__dot' }), h('span', { class: 'rstat__t', text: 'Starting R…' })]);
     var top = h('header', { class: 'top' }, [
-      h('div', { class: 'upbar' }, [h('a', { class: 'up', href: 'https://nlcsbiology.com/biology-hub/', text: '← Biology Hub' })]),
+      h('div', { class: 'upbar' }, [h('a', { class: 'up', href: './', text: '← Learn R' })]),   /* one level up: the choice of courses */
       h('a', { class: 'top__brand', href: './', html: '<span class="top__mark" aria-hidden="true">R</span><span><b>Learn R</b><small>Made by Dr Daniel Mompel Riera · NLCS Jeju</small></span>' }),
       h('div', { class: 'top__course', html: '<small>' + esc(C.kicker || '') + '</small><b>' + esc(C.title) + '</b>' }),
       status
