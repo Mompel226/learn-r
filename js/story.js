@@ -11,8 +11,11 @@
                 run: function (svg) { … } } ] }
 
    · show   parts that appear at this step (and stay)
+   · hide   parts that leave at this step (a picture can move on: the tally
+            makes way for the dots, the dots for the bars)
    · focus  parts lit at this step; everything else shown is dimmed
    · run    optional: animate something at this step (counts, growing bars)
+   · pan    optional: the part a phone scrolls to (else the last part shown)
    Going Back rebuilds the picture up to that step, so it is always right.
 
    LR.S — tiny SVG helpers for scenes: scale, axes, bars, normal curve, text.
@@ -80,10 +83,24 @@
 
     var parts = [].slice.call(svg.querySelectorAll('[data-el]'));
     var i = -1;
+    /* phones: the picture is wider than the screen; bring this step's part into view */
+    function pan(k) {
+      if (fig.scrollWidth <= fig.clientWidth + 2) return;
+      var st = s.steps[k], ids = st.pan ? [st.pan] : (st.show && st.show.length ? st.show : st.focus || []);
+      var tgt = ids.length ? svg.querySelector('[data-el="' + ids[ids.length - 1] + '"]') : null;
+      if (!tgt || !tgt.getBBox) return;
+      var bb = tgt.getBBox(), vb = svg.viewBox.baseVal, sc = svg.getBoundingClientRect().width / vb.width;
+      var cx = (bb.x + bb.width / 2 - vb.x) * sc;
+      var left = Math.max(0, Math.min(cx - fig.clientWidth / 2, fig.scrollWidth - fig.clientWidth));
+      try { fig.scrollTo({ left: left, behavior: LR.reduced() ? 'auto' : 'smooth' }); } catch (e) { fig.scrollLeft = left; }
+    }
     function go(k, animate) {
       k = Math.max(0, Math.min(k, s.steps.length - 1));
       var shown = {};
-      for (var j = 0; j <= k; j++) (s.steps[j].show || []).forEach(function (e) { shown[e] = true; });
+      for (var j = 0; j <= k; j++) {
+        (s.steps[j].show || []).forEach(function (e) { shown[e] = true; });
+        (s.steps[j].hide || []).forEach(function (e) { delete shown[e]; });
+      }
       var focus = s.steps[k].focus || [];
       parts.forEach(function (p) {
         var id = p.getAttribute('data-el');
@@ -105,22 +122,19 @@
       var last = k === s.steps.length - 1;
       next.textContent = last ? '↺ Watch again' : 'Next step →';
       if (st.run && animate) st.run(svg);
-      /* phones: the picture is wider than the screen; bring this step's part into view */
-      if (fig.scrollWidth > fig.clientWidth + 2) {
-        var ids = (st.show && st.show.length ? st.show : st.focus || []);
-        var tgt = ids.length ? svg.querySelector('[data-el="' + ids[ids.length - 1] + '"]') : null;
-        if (tgt && tgt.getBBox) {
-          var bb = tgt.getBBox(), vb = svg.viewBox.baseVal, sc = svg.getBoundingClientRect().width / vb.width;
-          var cx = (bb.x + bb.width / 2 - vb.x) * sc;
-          var left = Math.max(0, Math.min(cx - fig.clientWidth / 2, fig.scrollWidth - fig.clientWidth));
-          try { fig.scrollTo({ left: left, behavior: LR.reduced() ? 'auto' : 'smooth' }); } catch (e) { fig.scrollLeft = left; }
-        }
-      }
+      pan(k);
       if (last && s.gate) ctx.pass(s.id);
       i = k;
     }
-    next.addEventListener('click', function () { if (i === s.steps.length - 1) go(0, true); else go(i + 1, true); });
-    back.addEventListener('click', function () { go(i - 1, false); });
+    /* after a click, keep the picture, the words and the buttons on screen together */
+    function inView() {
+      var r = el.getBoundingClientRect(), vh = window.innerHeight || 0;
+      if (r.height <= vh && (r.top < 0 || r.bottom > vh)) {
+        try { el.scrollIntoView({ block: 'nearest', behavior: LR.reduced() ? 'auto' : 'smooth' }); } catch (e) { el.scrollIntoView(false); }
+      }
+    }
+    next.addEventListener('click', function () { if (i === s.steps.length - 1) go(0, true); else go(i + 1, true); inView(); });
+    back.addEventListener('click', function () { go(i - 1, false); inView(); });
     el.addEventListener('keydown', function (e) {
       if (e.target.closest('input, textarea, select')) return;
       if (e.key === 'ArrowRight') { e.preventDefault(); next.click(); }
@@ -128,6 +142,8 @@
     });
     el.tabIndex = -1;
     go(0, true);
+    /* the first step's pan needs the block on the page, which happens after this returns */
+    setTimeout(function () { if (i === 0) pan(0); }, 60);
     return el;
   };
 })(window.LR);
