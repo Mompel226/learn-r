@@ -489,7 +489,7 @@
                 analogy: 'A court that says *not guilty* has not proved the person innocent. It has decided the evidence was not strong enough.' }
             ] },
           { type: 'concept', title: 'Every test, in three steps',
-            md: 'The χ² test, the t-test and a correlation all work like the coin. With the heart rates:\n\n- **Pretend:** training does nothing, so the 6.45 bpm difference is just chance. That is **H₀**.\n- **Check:** in that pretend world, how often would chance alone give a difference as big as 6.45 bpm? That is the **p-value**: 0.016, or 16 times in 1,000.\n- **Decide:** that is rare, below 0.05, so stop pretending: reject H₀. The difference is significant.' },
+            md: 'The χ² test, the t-test and a correlation all work like the coin, in three steps:\n\n- **Pretend:** nothing is going on, so any difference you found is just chance. That is **H₀**.\n- **Check:** in that pretend world, how often would chance alone give a difference as big as the one you found? That is the **p-value**.\n- **Decide:** almost never, below 0.05? Stop pretending: reject H₀. The difference is significant.' },
           { type: 'analogy', md: 'The coin story was the same three steps. **Pretend** the coin is fair. **Check:** 80 heads in 100 tosses happens about 1 time in a billion. **Decide:** almost never, so stop pretending: the coin is probably not fair.' },
           { type: 'exercise', id: 'ib-binom', gate: true,
             task: 'R can do the whole coin story in one line: `binom.test(heads, tosses)`. Run it for 53 heads and find the **p-value** in the output. Then change 53 to **80**, run it again, and press **Check my answer**.',
