@@ -989,7 +989,9 @@
           { type: 'note', title: 'Ideas for a limitation',
             md: '- Each group has only about 15 students.\n' +
               '- Measuring errors: different people may measure hand span in different ways.\n' +
-              '- Students are still growing, and they grow at different ages.' }
+              '- Students are still growing, and they grow at different ages.' },
+          { type: 'note', title: 'R at home',
+            md: 'R is free, and it runs on any Mac or Windows computer. Ask an adult first, then install **R** from [cran.r-project.org](https://cran.r-project.org/) and **RStudio** from [posit.co](https://posit.co/download/rstudio-desktop/). The code you wrote here works there too. At IB, the last stage of [Statistics in R](https://nlcsbiology.com/learn-r/ib.html) shows you, step by step.' }
         ] }
     ]
   });

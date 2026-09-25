@@ -25,7 +25,10 @@ Eleven stages, from his `IB_Bio_D3_2.Rmd` Parts A–G, fenced by the IB guide (2
 4 normal distribution and SD (D.1) · 5 SE (D.2; 95 % CI only as an extension, D.3) · 6 the p-value (coin) ·
 7 which test (E, F; Mann–Whitney, ANOVA, Spearman on an optional shelf) · 8 t-test · 9 χ² (his C4.1 heather and
 moss, 57 · 7 · 9 · 27; HL dihybrid as an extension) · 10 correlation and R² (C2.2.4) · 11 put it together (G:
-messy stomatal-density data, B3.1.10, cleaned → described → graphed → tested → reported).
+messy stomatal-density data, B3.1.10, cleaned → described → graphed → tested → reported) · 12 carry on in RStudio
+(install R then RStudio, the whole course as ONE script `data/ib-statistics.R`, read your own .csv).
+- `data/ib-statistics.R` is BUILT by `node tools/make-ib-script.mjs` from the course (data + every exercise's
+  answer + the result it should give). `tools/check.mjs` fails if it is stale or does not run in R.
 - **One running example**: an INVENTED class of 40 (`students`: trains, exercise_h, resting_hr, abo), made in R so
   the numbers teach (see the header of `js/scenes/ib.js`): SD bars and 95 % CIs overlap yet t-test p = 0.016;
   28/40 within ± 1 SD; the only outlier is the 112 bpm reading taken after PE. The numbers live ONCE, in
@@ -125,6 +128,10 @@ stage without saving (teacher read-through); `?reset=1` forgets progress.
   text box if blocked), fonts from Google Fonts (optional). Everything is computed in the student's browser;
   nothing is sent back. Progress lives in that browser's localStorage: the teacher cannot see it.
 - Tested: Chrome (Mac), the in-app browser, WebKit 26 as iPad (gen 7) and iPhone 13 (Playwright, deleted after).
+- **Weekly alarm**: `.github/workflows/r-starts.yml` runs `tools/live-check.mjs` every Monday 07:00 Jeju time on
+  GitHub's computers: each course page in Chrome and WebKit must start R and answer one question, or the run fails
+  and GitHub emails the owner. Pinned: webR v0.6.0 (R 4.6); packages are the latest R 4.6 builds, NOT pinned.
+  GitHub pauses scheduled runs after 60 days with no commits: re-enable in the Actions tab.
 - When R cannot start, `r.js` names the reason and `course.js` shows a red panel under the top bar with what to do
   and **Try again**; every Run/Check button says **R did not start**. Measured: all three appear within ~2 s.
     browser   no WebAssembly / Web Workers / module scripts

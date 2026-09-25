@@ -1,0 +1,24 @@
+# Once a week, GitHub opens the live Learn R pages in Chrome and in WebKit (Safari's engine),
+# waits for R to start, and asks it one question (tools/live-check.mjs). If R does not start,
+# the run fails and GitHub emails the repository owner.
+# To run it now: the repository's Actions tab → "R still starts" → Run workflow.
+# GitHub pauses weekly runs in a repository with no new commits for 60 days: re-enable it there.
+name: R still starts
+on:
+  schedule:
+    - cron: '0 22 * * 0'   # Sunday 22:00 UTC = Monday 07:00 in Jeju
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-save --no-audit --no-fund playwright@1
+      - run: npx playwright install --with-deps chromium webkit
+      - run: node tools/live-check.mjs
