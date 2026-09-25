@@ -33,9 +33,11 @@ button, select, input { font: inherit; }
 /* ---------- top bar ---------- */
 .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 18px; padding: 10px 22px; background: rgba(247, 246, 242, .94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--edge); }
 .top__brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; min-width: 0; }
-.tohub { flex: none; font: 600 .84rem/1 var(--sans); color: var(--ink); text-decoration: none; padding: 9px 13px; border: 1px solid var(--edge); border-radius: 999px; background: var(--card); white-space: nowrap; }
-.tohub:hover { border-color: var(--ink-2); }
-.top__brand + .tohub { margin-left: auto; }   /* the home page: brand left, hub right */
+/* "← Biology Hub": top left, above the name, as in the Bio English Lab and the hubs */
+.top { flex-wrap: wrap; row-gap: 4px; }
+.upbar { flex-basis: 100%; }
+.up { display: inline-flex; align-items: center; min-height: 30px; margin: -6px 0 -4px -6px; padding: 0 6px; font: 600 12.5px/1 var(--sans); color: var(--ink-2); text-decoration: none; border-radius: 4px; }
+.up:hover, .up:focus-visible { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .top__brand b { display: block; font: 650 1.12rem/1.1 var(--serif); }
 .top__brand small { display: block; font: 500 .74rem/1.3 var(--sans); color: var(--ink-2); }
 .top__mark { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--r); color: #fff; font: 700 1.2rem/1 var(--serif); }
@@ -221,7 +223,6 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
   .top__course { order: 3; width: 100%; margin-left: 0; padding: 6px 0 0; border-left: 0; border-top: 1px solid var(--edge); display: flex; align-items: baseline; gap: 8px; }
   .top__course small, .top__course b { display: inline; }
   .rstat { margin-left: auto; padding: 4px 10px; font-size: .76rem; max-width: 46%; }
-  .top .rstat + .tohub { order: 2; padding: 6px 10px; font-size: .78rem; }
   .rstat__t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .data-choices { grid-template-columns: minmax(0, 1fr); }
   .ex-keys { display: none; }
