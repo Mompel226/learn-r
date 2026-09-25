@@ -894,7 +894,6 @@
                   '- **Pretend** the two groups are really the same.\n' +
                   '- **Check:** how often would chance alone give a difference as big as yours? That number is p. 0.05 means 5 times in 100.\n' +
                   '- **Decide:** below 0.05, chance would rarely do this, so stop pretending: the difference is **statistically significant**. At 0.05 or above, it is not significant.\n\n' +
-                  'To remember it: **small p, big news. Big p, no news.**\n\n' +
                   'Significant does __not__ mean that the difference is big, important or certain.' },
               { type: 'analogy', title: 'The p-value',
                 md: 'Your friend says that a coin is fair. You flip it 10 times. You get 6 heads: you are not surprised, because a fair coin often does that. You get 10 heads: you are very surprised, because a fair coin almost never does that. So you start to doubt that the coin is fair.\n\n' +
