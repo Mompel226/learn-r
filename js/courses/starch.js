@@ -177,7 +177,7 @@
             md: 'Excel has a built-in function for everything the IB Biology guide asks you to calculate: SD, error bars, the t-test, χ², r and R². No mark is given anywhere for using R, and Excel is enough for this course.\n\n' +
               'So use both, as most scientists do. Use Excel to look at your numbers and make a quick chart. Use R when the analysis must be __repeatable__, when it is __large__, or when the statistics go beyond a straight line.' },
           { type: 'note', title: 'Two ways to do this course', files: FILES,
-            md: '- **Here, in this page.** Real R runs inside this page, so there is nothing to install. Every stage has code for you to run and check.\n' +
+            md: '- **Here, in this page.** Real R runs inside this page: the page downloads it, but nothing is installed on your computer. Every stage has code for you to run and check.\n' +
               '- **On your own computer, in RStudio.** You need this for your own readings, and later for your IA. The last stage shows you how to install R and RStudio. The script and the workbook are here:' },
           { type: 'mcq', id: 'st-why', gate: true,
             q: 'Why is this practical a good moment to meet R?',

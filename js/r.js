@@ -101,7 +101,7 @@
   }
 
   function boot() {
-    status('loading', R.firstVisit ? 'Starting R. The first time takes about 20 seconds.' : 'Starting R…');
+    status('loading', R.firstVisit ? 'Downloading R into this page. The first time takes about 20 seconds.' : 'Starting R…');
     var pkgs = (cfg.packages || []).concat(['jsonlite']);
     return moduleReady().then(function (WebR) {
       webR = new WebR();
