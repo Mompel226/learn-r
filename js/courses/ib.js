@@ -114,7 +114,7 @@
         blocks: [
           { type: 'goal', md: 'Calculate in R, store values under a name, use a function, and look at a data table.' },
           { type: 'concept', title: 'What R is',
-            md: 'Scientists use R to calculate, draw graphs and run statistical tests. You type a line of code, press **Run**, and R answers underneath.\n\nIn this course, R runs inside the page: nothing to install.' },
+            md: 'Scientists use R to calculate, draw graphs and run statistical tests. You type a line of code, press **Run**, and R answers underneath.\n\nIn this course, R runs inside the page, so you need nothing installed. Only the last stage shows you how to install R on your own computer, for your IA or EE.' },
           { type: 'exercise', id: 'ib-calc', gate: true, title: 'Your turn · R as a calculator',
             task: 'Three pulse readings: 72, 75 and 78 beats per minute (bpm). Work out their mean: add them, then divide by 3. Type it on the empty line, then press **Run**.',
             code: '# Mean of 72, 75 and 78: add them, then divide by 3\n\n',
