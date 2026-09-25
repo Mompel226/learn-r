@@ -893,8 +893,9 @@
                 md: 'A t-test gives a **p-value**: a number between 0 and 1. It tells you how surprising your difference would be __if the two groups were really the same__.\n\n' +
                   '- p is __below 0.05__: a difference this big would be surprising by chance alone. The difference is **statistically significant**.\n' +
                   '- p is __0.05 or above__: a difference this big could easily happen by chance. It is not significant.\n\n' +
+                  'To remember it: **low p, significant. High p, not.** Low means below 0.05.\n\n' +
                   '0.05 means 5 in 100. Imagine that the groups are really the same. Then p = 0.05 means that a difference this big (or bigger) would happen by chance about 5 times in 100.\n\n' +
-                  'Significant does __not__ mean that the difference is big, or important, or certain. It means only that the difference is unlikely to come from chance alone.' },
+                  'Significant does __not__ mean that the difference is big, or important, or certain. It means only that chance alone would rarely give a difference this big.' },
               { type: 'analogy', title: 'The p-value',
                 md: 'Your friend says that a coin is fair. You flip it 10 times. You get 6 heads: you are not surprised, because a fair coin often does that. You get 10 heads: you are very surprised, because a fair coin almost never does that. So you start to doubt that the coin is fair.\n\n' +
                   'The p-value measures this surprise. It asks: if the two groups were really the same, how surprising is the difference you found? A tiny p-value means very surprising.' },
@@ -959,7 +960,7 @@
                 tip: 'Run the t-test above once for each measurement. Type p to 4 decimal places (0.0000 for a tiny p), or copy it as R prints it.',
                 pass: 'Your table is right: every p-value and every star.' },
               { type: 'interpret', title: 'What your table means',
-                md: '- A measurement with `*`, `**` or `***`: the difference between the two means is unlikely to come from chance alone.\n' +
+                md: '- A measurement with `*`, `**` or `***`: chance alone would rarely give a difference this big between the two means.\n' +
                   '- A measurement with `ns`: this test found no clear evidence of a difference. That does __not__ show that the two groups are the same. With about 15 students in each group, a small real difference is easy to miss.\n' +
                   '- In the sample class, only shoe size is significant: the boys’ mean is bigger. Height, arm span and hand span are `ns`.' }
             ] }
