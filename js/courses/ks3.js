@@ -893,7 +893,7 @@
                 md: 'A t-test gives a **p-value**: a number between 0 and 1. It tells you how surprising your difference would be __if the two groups were really the same__.\n\n' +
                   '- p is __below 0.05__: a difference this big would be surprising by chance alone. The difference is **statistically significant**.\n' +
                   '- p is __0.05 or above__: a difference this big could easily happen by chance. It is not significant.\n\n' +
-                  'To remember it: **low p, significant. High p, not.** Low means below 0.05.\n\n' +
+                  'To remember it: **small p, big news. Big p, no news.** Small means below 0.05.\n\n' +
                   '0.05 means 5 in 100. Imagine that the groups are really the same. Then p = 0.05 means that a difference this big (or bigger) would happen by chance about 5 times in 100.\n\n' +
                   'Significant does __not__ mean that the difference is big, or important, or certain. It means only that chance alone would rarely give a difference this big.' },
               { type: 'analogy', title: 'The p-value',
