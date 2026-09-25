@@ -4,8 +4,8 @@
    ONE running example (Daniel: "one running example, extend it rather than
    switch"): an INVENTED class of 40 students. Half train in a sports team,
    half do not. For each: resting heart rate (B3.2.4: the pulse at the wrist,
-   60 s), hours of exercise a week, and ABO blood group (D3.2.14's discrete
-   example). Made in R (25 Sep 2026) so that the numbers teach:
+   60 s), hours of exercise a week, and ABO blood group (categorical in
+   statistics; D3.2.14's "discrete" example in genetics). Made in R (25 Sep 2026) so that the numbers teach:
      do not train  mean 77.00  SD 7.75  SE 1.73  95 % CI 73.37–80.63  (n = 20)
      train         mean 70.55  SD 8.40  SE 1.88  95 % CI 66.62–74.48  (n = 20)
      t = 2.52, df = 38, p = 0.016 (SE of the difference 2.56; critical t 2.02)

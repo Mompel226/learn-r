@@ -2,7 +2,7 @@
    courses/ib.js — IB · Statistics in R. Rebuilt from Daniel's
    NLCS/IB/Learning R/IB_Bio_D3_2.Rmd (Parts A–G) around what the IB
    Biology guide (2025) asks: Tool 3 (mean, median, mode; range, SD,
-   SE, IQR; continuous v discrete; χ² and t-tests; r and R²; error bars),
+   SE, IQR; continuous, discrete, categorical; χ² and t-tests; r and R²; error bars),
    Inquiry 2 (justify removing or keeping outliers), D3.2.14–15 (central
    tendency, box-and-whisker plots, 1.5 × IQR), D2.3.4 (SD and SE, no
    formulae to memorise), C4.1.15 (χ² for association), C2.2.4 (r and R²),
@@ -221,19 +221,29 @@
       { id: 'look', title: 'Look before you test',
         lede: 'Before any calculation, look at your data: what kind it is, how it is spread, and whether any value is odd.',
         blocks: [
-          { type: 'goal', md: 'Tell continuous from discrete data, choose the graph that fits, and check an outlier with a box plot.' },
-          { type: 'concept', title: 'Two kinds of variable',
-            md: 'A **continuous** variable is measured on a scale, and can take any value in a range: resting heart rate, height, hours of exercise.\n\nA **discrete** variable has separate categories: blood group A, B, AB or O; in a team or not.\n\nThe IB guide uses the same examples: skin colour is continuous, ABO blood group is discrete (D3.2.14).' },
-          { type: 'analogy', md: 'A ruler gives continuous data: any length is possible. A register gives discrete data: each student is ticked in exactly one box.' },
-          { type: 'filltable', id: 'ib-kinds', gate: true, title: 'Continuous or discrete?', rowLabel: 'Column of students',
-            md: 'Choose the kind of each variable in the `students` table.',
-            key: 'data.frame(label = c("resting_hr (bpm)", "exercise_h (hours a week)", "abo (blood group)", "trains (Yes or No)"), kind = c("continuous", "continuous", "discrete", "discrete"))',
-            fields: [{ key: 'kind', label: 'Kind', options: ['continuous', 'discrete'] }],
-            pass: 'Measurements are continuous. Categories are discrete.',
-            tip: 'Ask: is it measured on a scale, or is it a category?' },
+          { type: 'goal', md: 'Sort data into continuous, discrete and categorical, choose the graph that fits, and check an outlier with a box plot.' },
+          { type: 'concept', title: 'Three kinds of data',
+            md: 'How you get a value decides its kind.\n\n' +
+              '- **Continuous**: __measured__ on a scale, and it can take any value in a range. Height, mass, time, hours of exercise.\n' +
+              '- **Discrete**: __counted__, so whole numbers only. Stomata in a field of view, seeds in a pod.\n' +
+              '- **Categorical**: __named groups__, not numbers. Blood group (A, B, AB or O); in a team or not. Some categories have an order: low, medium, high.\n\n' +
+              'Continuous and discrete data are numbers (quantitative). Categorical data are words (qualitative).' },
+          { type: 'analogy', md: 'A ruler gives continuous data: any length is possible. A tally counter gives discrete data: 4 or 5, never 4.5. A register gives categorical data: each student is ticked in exactly one box.' },
+          { type: 'note', title: 'Two meanings of “discrete”',
+            md: '**In statistics** (this course, your IA and your EE), *discrete* means counted numbers, and blood group is *categorical*. These are the words that choose your graph and your test.\n\n' +
+              '**In genetics**, the IB guide (D3.2.14) compares *continuous* variables, such as skin colour, with *discrete* variables, such as ABO blood group. There, *discrete* means discontinuous variation: separate classes, with nothing in between. Cambridge IGCSE calls it *discontinuous variation*.\n\n' +
+              'Both meanings say *separate*: separate numbers, or separate groups. So when you describe variation in genetics, write that blood group is discrete (discontinuous). When you choose a graph or a test, call it categorical.' },
+          { type: 'note', title: 'And resting heart rate?',
+            md: 'Strictly, it is a count: beats in 60 seconds. But a rate can take any value (72.5 bpm from a 30-second count), and a count with many possible values behaves like a measurement. So this course, like most biologists, treats it as continuous.' },
+          { type: 'filltable', id: 'ib-kinds', gate: true, title: 'Continuous, discrete or categorical?', rowLabel: 'Variable',
+            md: 'Choose the kind of each variable: four from the `students` table, and two new ones.',
+            key: 'data.frame(label = c("resting_hr (bpm)", "exercise_h (hours a week)", "abo (blood group)", "trains (Yes or No)", "Stomata counted in a field of view", "Abundance: rare, occasional, frequent or abundant"), kind = c("continuous", "continuous", "categorical", "categorical", "discrete", "categorical"))',
+            fields: [{ key: 'kind', label: 'Kind', options: ['continuous', 'discrete', 'categorical'] }],
+            pass: 'Measured: continuous. Counted: discrete. Named groups, even groups in an order: categorical.',
+            tip: 'Ask: is it measured, counted, or a named group?' },
           { type: 'rplot', title: 'The kind of data chooses the graph',
-            md: 'Choose a column. R draws a **histogram** for continuous data (the bars touch, because the scale has no gaps) and a **bar chart** for discrete data (the bars stand apart).',
-            pickers: [{ id: 'v', label: 'Column', values: [{ v: 'resting_hr', t: 'resting_hr (continuous)' }, { v: 'exercise_h', t: 'exercise_h (continuous)' }, { v: 'abo', t: 'abo (discrete)' }, { v: 'trains', t: 'trains (discrete)' }], 'default': 'resting_hr' }],
+            md: 'Choose a column. R draws a **histogram** for continuous data (the bars touch, because the scale has no gaps) and a **bar chart** for categorical data (the bars stand apart).',
+            pickers: [{ id: 'v', label: 'Column', values: [{ v: 'resting_hr', t: 'resting_hr (continuous)' }, { v: 'exercise_h', t: 'exercise_h (continuous)' }, { v: 'abo', t: 'abo (categorical)' }, { v: 'trains', t: 'trains (categorical)' }], 'default': 'resting_hr' }],
             code: [
               'v <- "{{v}}"',
               'lab <- c(resting_hr = "Resting heart rate / bpm", exercise_h = "Exercise / hours per week", abo = "Blood group", trains = "Trains in a sports team?")[[v]]',
@@ -246,7 +256,7 @@
               '} else {',
               '  ggplot(d, aes(x = x)) +',
               '    geom_bar(fill = "#9FD8B5", width = 0.6) +',
-              '    labs(x = lab, y = "Number of students", title = .lr_wrap("Discrete: a bar chart. The bars stand apart.")) +',
+              '    labs(x = lab, y = "Number of students", title = .lr_wrap("Categorical: a bar chart. The bars stand apart.")) +',
               THEME,
               '}'
             ].join('\n'), w: 600, h: 380 },
