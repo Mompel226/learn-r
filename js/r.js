@@ -19,6 +19,16 @@
    LR.R.writeFile(path, bytes)       put an uploaded file on R's disk
    LR.on('r:status', fn)             {state:'loading'|'installing'|'ready'|'busy'|'restarting'|'error', msg}
    LR.on('r:restarted', fn)          R came back after a restart: re-load data
+   LR.on('r:failed', fn)             R could not start: {kind, msg} (course.js shows
+                                     the student why, and what to do)
+
+   When R cannot start, the student is told WHY, quickly (Daniel, 25 Sep 2026:
+   "if something fails, how are the students informed?"):
+     browser   no WebAssembly / Web Workers / modules: at once
+     blocked   webr.r-wasm.org cannot be reached: as soon as the download fails
+     packages  repo.r-wasm.org cannot be reached: checked by name after install
+     slow      still nothing after 150 s (a message at 25 s says it is still coming)
+     crash     anything else, or R failed to come back after a restart
    ============================================================ */
 (function (LR) {
   'use strict';
@@ -30,6 +40,19 @@
   R.state = 'loading';
 
   function status(state, msg) { R.state = state; LR.emit('r:status', { state: state, msg: msg }); }
+
+  var WHY = {
+    browser: 'This browser is too old to run R.',
+    blocked: 'R could not be downloaded from webr.r-wasm.org.',
+    packages: 'R started, but its extra tools could not be downloaded from repo.r-wasm.org.',
+    slow: 'R is taking too long to download.',
+    crash: 'R stopped unexpectedly.'
+  };
+  function problem(kind, detail) { var e = new Error(WHY[kind]); e.kind = kind; e.detail = detail || ''; return e; }
+  R.WHY = WHY;
+  function withLimit(p, ms, kind) {
+    return Promise.race([p, new Promise(function (res, rej) { setTimeout(function () { rej(problem(kind)); }, ms); })]);
+  }
 
   /* the helpers every page needs: run a student's code in a fresh environment, then check it */
   var BASE = [
@@ -66,25 +89,34 @@
 
   function moduleReady() {
     if (window.LRWebR) return Promise.resolve(window.LRWebR);
+    if (window.LRWebRError) return Promise.reject(problem('blocked', window.LRWebRError));
+    var modules = 'noModule' in document.createElement('script');
+    if (typeof WebAssembly !== 'object' || typeof Worker !== 'function' || !modules) return Promise.reject(problem('browser'));
     return new Promise(function (res, rej) {
       window.addEventListener('webr-module-loaded', function () { res(window.LRWebR); });
-      setTimeout(function () { if (!window.LRWebR) rej(new Error('R could not be downloaded. Check the internet connection, then reload the page.')); }, 60000);
+      window.addEventListener('webr-module-failed', function () { rej(problem('blocked', window.LRWebRError)); });
+      setTimeout(function () { if (!window.LRWebR && R.state === 'loading') status('loading', 'Still downloading R. On a slow network this can take a minute or two.'); }, 25000);
+      setTimeout(function () { if (!window.LRWebR) rej(problem('slow')); }, 150000);
     });
   }
 
   function boot() {
     status('loading', R.firstVisit ? 'Starting R. The first time takes about 20 seconds.' : 'Starting R…');
+    var pkgs = (cfg.packages || []).concat(['jsonlite']);
     return moduleReady().then(function (WebR) {
       webR = new WebR();
-      return webR.init();
+      return withLimit(webR.init(), 150000, 'slow');
     }).then(function () {
-      if (!cfg.packages || !cfg.packages.length) return null;
-      status('installing', 'Getting R ready: ' + cfg.packages.join(', ') + '…');
+      status('installing', 'Getting R ready: ' + pkgs.join(', ') + '…');
       /* one call for all of them: many times faster than one at a time */
-      return webR.installPackages(cfg.packages.concat(['jsonlite']), { quiet: true });
+      return withLimit(webR.installPackages(pkgs, { quiet: true }), 150000, 'slow').catch(function (e) { if (e && e.kind) throw e; });
     }).then(function () {
+      /* installPackages fails quietly when repo.r-wasm.org is blocked: check each package by name */
+      return webR.evalRBoolean('all(vapply(c(' + pkgs.map(function (p) { return '"' + p + '"'; }).join(', ') + '), function(p) nzchar(system.file(package = p)), logical(1)))');
+    }).then(function (ok) {
+      if (!ok) throw problem('packages');
       return webR.evalRVoid(BASE + '\n' + (cfg.setup || '') + '\nsuppressPackageStartupMessages({' + (cfg.packages || []).map(function (p) { return 'library(' + p + ')'; }).join('; ') + '})');
-    });
+    }).catch(function (e) { throw (e && e.kind) ? e : problem('crash', e && e.message); });
   }
 
   R.start = function (c) {
@@ -95,7 +127,9 @@
       status('ready', 'R is ready');
       readyResolve(R);
     }, function (e) {
-      status('error', e && e.message ? e.message : 'R did not start.');
+      R.problem = { kind: e.kind || 'crash', msg: e.message, detail: e.detail || '' };
+      status('error', e.message);
+      LR.emit('r:failed', R.problem);
       readyReject(e);
     });
     return R.ready;
@@ -107,7 +141,10 @@
     return boot().then(function () {
       status('ready', 'R is ready');
       LR.emit('r:restarted');
-    }, function (e) { status('error', e.message || 'R did not restart.'); throw e; });
+    }, function (e) {
+      R.problem = { kind: e.kind || 'crash', msg: e.message || WHY.crash, detail: e.detail || '' };
+      status('error', R.problem.msg); LR.emit('r:failed', R.problem); throw e;
+    });
   };
 
   /* every evaluation goes through one queue, and each has a time limit */

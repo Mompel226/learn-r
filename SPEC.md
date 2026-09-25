@@ -119,6 +119,22 @@ code already passes (set `starterPasses: true` only for "run this" exercises).
 Browser testing: the in-app browser (headless Chrome's package downloads fail here). `?all=1` opens every
 stage without saving (teacher read-through); `?reset=1` forgets progress.
 
+## Where it runs, and when it cannot (25 Sep 2026)
+- The page comes from nlcsbiology.com (GitHub Pages). R itself (webR, about 40 MB) comes from `webr.r-wasm.org`,
+  its packages from `repo.r-wasm.org` (both run by Posit), the code editor from `cdnjs.cloudflare.com` (a plain
+  text box if blocked), fonts from Google Fonts (optional). Everything is computed in the student's browser;
+  nothing is sent back. Progress lives in that browser's localStorage: the teacher cannot see it.
+- Tested: Chrome (Mac), the in-app browser, WebKit 26 as iPad (gen 7) and iPhone 13 (Playwright, deleted after).
+- When R cannot start, `r.js` names the reason and `course.js` shows a red panel under the top bar with what to do
+  and **Try again**; every Run/Check button says **R did not start**. Measured: all three appear within ~2 s.
+    browser   no WebAssembly / Web Workers / module scripts
+    blocked   the webR download fails (school firewall, offline)
+    packages  installed packages checked by name (installPackages fails SILENTLY when the repo is blocked)
+    slow      "still downloading" at 25 s; gives up at 150 s
+    crash     anything else, or R did not come back after the 25 s watchdog restart
+  Test them with headless Chrome: `--host-resolver-rules=MAP webr.r-wasm.org ~NOTFOUND` (or repo.…), or delete
+  `window.WebAssembly` before the page loads.
+
 ## Phones (audited 25 Sep 2026, 320–1280 px)
 - R draws every graph at the width it is shown (`LR.plotSize`), so labels stay readable; page graphs wrap
   their titles with `.lr_wrap()` (it reads `.lr_plot_w`).

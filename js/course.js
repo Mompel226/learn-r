@@ -57,7 +57,26 @@
     var side = h('nav', { class: 'side', 'aria-label': 'Stages' });
     var main = h('main', { class: 'main', id: 'main', tabindex: '-1' });
     root.appendChild(top);
+    /* when R cannot start: why, and what to do, above everything (the stories and questions still work) */
+    var fail = h('section', { class: 'rfail', hidden: true, role: 'alert' });
+    root.appendChild(fail);
     root.appendChild(h('div', { class: 'shell' }, [side, main]));
+    LR.on('r:failed', function (pb) {
+      var todo = {
+        browser: ['Open this page in an up-to-date <b>Chrome</b>, <b>Edge</b> or <b>Safari</b>. On an iPad or a school laptop, update it first.'],
+        blocked: ['Press <b>Try again</b>.', 'At home: check that other websites open.', 'At school: tell your teacher. The school network must allow <code>webr.r-wasm.org</code> and <code>repo.r-wasm.org</code>.'],
+        packages: ['Press <b>Try again</b>.', 'At school: tell your teacher. The school network must allow <code>repo.r-wasm.org</code>.'],
+        slow: ['Press <b>Try again</b>. The second time is often faster.', 'If the network is slow, try again later, or at home.'],
+        crash: ['Press <b>Try again</b>. The page reloads and R starts again. Your progress is kept.']
+      }[pb.kind] || ['Press <b>Try again</b>.'];
+      fail.innerHTML = '<div class="rfail__in"><p class="rfail__h">R could not start on this device</p><p class="rfail__why">' + esc(pb.msg) + '</p>' +
+        '<p class="rfail__k">What you can do</p><ol class="rfail__list">' + todo.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ol>' +
+        '<p class="rfail__note">Meanwhile you can still read this stage, watch its step-by-step stories and answer its questions. Only the <b>Run</b> buttons need R.</p></div>';
+      var again = h('button', { type: 'button', class: 'btn btn--run rfail__btn', text: '↻ Try again' });
+      again.addEventListener('click', function () { location.reload(); });
+      fail.firstChild.appendChild(again);
+      fail.hidden = false;
+    });
 
     LR.on('r:status', function (s) {
       status.className = 'rstat is-' + s.state;

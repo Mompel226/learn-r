@@ -88,7 +88,8 @@
 
   function whenR(btns) {
     btns.forEach(function (b) { b.disabled = true; b.dataset.label = b.textContent; b.textContent = 'Waiting for R…'; });
-    LR.R.ready.then(function () { btns.forEach(function (b) { b.disabled = false; b.textContent = b.dataset.label; }); });
+    LR.R.ready.then(function () { btns.forEach(function (b) { b.disabled = false; b.textContent = b.dataset.label; }); },
+      function () { btns.forEach(function (b) { b.textContent = 'R did not start'; }); });
   }
 
   /* ---------- exercise: write R, run it, check it ---------- */

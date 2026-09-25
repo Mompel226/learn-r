@@ -195,10 +195,23 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 .data-state { margin-top: 12px; }
 .data-state:empty { display: none; }
 
+/* ---------- R could not start ---------- */
+.rfail { max-width: 1240px; margin: 16px auto 0; padding: 0 22px; }
+.rfail[hidden] { display: none; }
+.rfail__in { padding: 16px 18px; background: var(--red-bg); border: 1px solid var(--red-edge); border-left: 5px solid var(--red); border-radius: 14px; }
+.rfail__h { margin: 0 0 4px; font: 650 1.15rem/1.3 var(--serif); color: var(--red); }
+.rfail__why { margin: 0 0 10px; font-weight: 600; }
+.rfail__k { margin: 0 0 4px; font: 600 .72rem/1.2 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+.rfail__list { margin: 0 0 10px; padding-left: 1.3em; }
+.rfail__list li { margin: 2px 0; }
+.rfail__note { margin: 0 0 12px; color: var(--ink-2); font-size: .92rem; }
+.rfail code { overflow-wrap: anywhere; }
+
 /* ---------- small screens ---------- */
 @media (max-width: 900px) {
   .top { position: static; }
   .shell { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 14px 16px 60px; }
+  .rfail { padding: 0 16px; margin-top: 12px; }
   .side { position: static; max-height: none; }
   .side__list { grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); overflow-x: auto; padding-bottom: 4px; }
   .top { flex-wrap: wrap; gap: 6px 14px; padding: 8px 16px; }
