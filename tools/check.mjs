@@ -11,6 +11,11 @@
      course's sample data
    · every R expression the page evaluates (pickers, rtable, filltable
      and rquiz keys, rplot code) runs without an error
+   · every story draws, every part a step names exists, and NO STEP IS AN
+     EMPTY BOX (Daniel, 25 Sep 2026: step 1 of the coin story showed one pill
+     in a white box, and he could not follow it)
+   · every number a course quotes (C.facts: [R expression, value, tolerance])
+     is what R gets
 
        node tools/check.mjs            check
        node tools/check.mjs --stamp    check, then stamp ?v= and version.txt
@@ -32,6 +37,11 @@ sandbox.window = sandbox;
 vm.createContext(sandbox);
 const run = (rel) => vm.runInContext(fs.readFileSync(path.join(ROOT, rel), 'utf8'), sandbox, { filename: rel });
 run('js/core.js'); run('js/r.js');
+sandbox.LR.blocks = {}; run('js/story.js');            /* LR.S, for drawing the stories' scenes */
+if (fs.existsSync(path.join(ROOT, 'js/scenes'))) for (const f of fs.readdirSync(path.join(ROOT, 'js/scenes')).filter((f) => f.endsWith('.js'))) {
+  run('js/scenes/' + f);
+  if (!fs.readdirSync(ROOT).filter((p) => p.endsWith('.html')).some((p) => fs.readFileSync(path.join(ROOT, p), 'utf8').includes('js/scenes/' + f))) E(`js/scenes/${f} is not loaded by any page`);
+}
 const courses = [];
 sandbox.LR.course = (c) => courses.push(c);            /* capture the definition instead of drawing it */
 const BASE = sandbox.LR.R.BASE;
@@ -71,6 +81,24 @@ for (const C of courses) {
           if (ok !== 1) E(`${w}: an mcq needs exactly one right answer (has ${ok})`);
           (b.opts || []).forEach((o) => { if (!o.ok && !o.why) W(`${w}: wrong option "${o.t}" has no why`); });
         }
+        if (b.type === 'story') {
+          let svg = null;
+          if (typeof b.scene !== 'function') E(`${w}: a story needs a scene function`);
+          else { try { svg = b.scene(sandbox.LR.S); } catch (e) { E(`${w}: the scene throws: ${e.message}`); } }
+          if (svg) {
+            if (/NaN|undefined|Infinity/.test(svg)) E(`${w}: the scene has NaN, undefined or Infinity in it`);
+            const els = new Set([...svg.matchAll(/data-el="([^"]+)"/g)].map((m) => m[1]));
+            const shown = new Set();
+            (b.steps || []).forEach((stp, k) => {
+              const sw2 = `${w} › step ${k + 1} "${stp.title || ''}"`;
+              for (const key of ['show', 'hide', 'focus']) (stp[key] || []).forEach((id) => { if (!els.has(id)) E(`${sw2}: ${key} names "${id}", which the scene does not draw`); });
+              if (stp.pan && !els.has(stp.pan)) E(`${sw2}: pan names "${stp.pan}", which the scene does not draw`);
+              (stp.show || []).forEach((id) => shown.add(id)); (stp.hide || []).forEach((id) => shown.delete(id));
+              if (!shown.size) E(`${sw2}: the picture is empty. Every step must show something`);
+              if (!stp.md) E(`${sw2}: a step needs words (md)`);
+            });
+          }
+        }
         if (b.type === 'rplot') { (b.pickers || []).forEach((p) => { if (p.from) rJobs.push([w, 'expr', p.from]); }); rJobs.push([w, 'plot', b]); }
         if (b.type === 'rtable') rJobs.push([w, 'expr', b.code]);
         if (b.type === 'filltable') rJobs.push([w, 'expr', b.key]);
@@ -101,6 +129,10 @@ for (const C of courses) {
       else W(`${w}: graph code not tested (a picker has no default)`);
     }
   });
+  (C.facts || []).forEach(([expr, want, tol], i) => {
+    const w = [].concat(want);
+    R += `tryCatch({ .v <- as.numeric(local({\n${expr}\n})); .w <- c(${w.join(', ')}); if (length(.v) != length(.w) || any(abs(.v - .w) > ${tol} + 1e-9)) .lr_report(${q(at + ' › fact ' + (i + 1))}, paste0(${q(expr)}, " is ", paste(signif(.v, 6), collapse = ", "), ", not ", paste(.w, collapse = ", "))) }, error = function(e) .lr_report(${q(at + ' › fact ' + (i + 1))}, paste("the R expression fails:", conditionMessage(e))))\n`;
+  });
   R += `cat("DONE|", .lr_fails, "\\n", sep = "")\n`;
   const tmp = path.join(ROOT, 'tools', `.check-${C.id}.R`);
   fs.writeFileSync(tmp, R);
@@ -111,7 +143,7 @@ for (const C of courses) {
   } catch (e) {
     E(`${at}: Rscript failed — ${String(e.stderr || e.message).split('\n').slice(-6).join(' ')}`);
   } finally { fs.rmSync(tmp, { force: true }); }
-  console.log(`${C.id}: ${C.stages.length} stages · ${rJobs.filter((j) => j[1] === 'exercise').length} checked exercises · ${rJobs.length} R jobs`);
+  console.log(`${C.id}: ${C.stages.length} stages · ${rJobs.filter((j) => j[1] === 'exercise').length} checked exercises · ${rJobs.length} R jobs · ${(C.facts || []).length} facts`);
   rJobs.length = 0;
 }
 

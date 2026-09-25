@@ -45,6 +45,11 @@ button, select, input { font: inherit; }
 .rstat.is-busy .rstat__dot { background: var(--r); animation: pulse 1s ease-in-out infinite; }
 .rstat.is-error .rstat__dot { background: var(--red); }
 .rstat.is-error { color: var(--red); border-color: var(--red-edge); background: var(--red-bg); }
+/* a long message (an R error with a web address) wraps inside the pill, three lines at most */
+.rstat { min-width: 0; }
+.rstat__t { min-width: 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+/* inline code in the words wraps on a narrow phone instead of widening the page */
+.prose code, .fb code { overflow-wrap: anywhere; }
 @keyframes pulse { 50% { opacity: .35; } }
 
 /* ---------- shell: stage list + one stage ---------- */
@@ -150,7 +155,7 @@ canvas.rplot { display: block; width: 100%; height: auto; background: #fff; bord
 .btn--go { background: var(--ink); color: #fff; font-size: 1rem; padding: 12px 18px; } .btn--go:hover { background: #1C2A36; }
 
 /* ---------- feedback ---------- */
-.fb { margin: 0; padding: 9px 12px; border-radius: 10px; font-size: .95rem; line-height: 1.5; }
+.fb { margin: 0; padding: 9px 12px; border-radius: 10px; font-size: .95rem; line-height: 1.5; overflow-wrap: anywhere; }
 .fb--ok { background: var(--green-bg); border: 1px solid var(--green-edge); color: #0F4F29; }
 .fb--no { background: var(--red-bg); border: 1px solid var(--red-edge); color: #7A1A12; }
 
@@ -207,7 +212,7 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 }
 
 /* ---------- story: an idea told click by click ---------- */
-.blk--story { padding-bottom: 12px; }
+.blk--story { padding-bottom: 12px; scroll-margin-top: 72px; }
 .blk--story:focus { outline: none; }
 .story__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .story__words { max-width: 68ch; }
@@ -263,6 +268,39 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 .st-zone-ok { fill: rgba(22, 163, 74, .10); stroke: none; }
 .st-zone-bad { fill: rgba(220, 38, 38, .09); stroke: none; }
 .st-hot { stroke: #B42318; stroke-width: 1.6; }
+/* the IB stories: two groups (do not train = blue, train = teal), cards, box plots, error bars, quadrats */
+.st-dot--t { fill: #0E7A66; }
+.st-dot--grey { fill: #9CA3AF; }
+.st-dot--hot { fill: #B42318; }
+.st-dot--open { fill: #fff; stroke: var(--r); stroke-width: 1.6; }
+.st-bar--t { fill: #BFE3DA; stroke: #0E7A66; stroke-width: 1; }
+.st-bar--grey { fill: #E5E7EB; stroke: #9CA3AF; stroke-width: 1; }
+.st-curve--t { fill: none; stroke: #0E7A66; stroke-width: 2.6; }
+.st-curve--grey { fill: none; stroke: #6B7280; stroke-width: 2.2; }
+.st-card { fill: #fff; stroke: #D1D5DB; stroke-width: 1.2; }
+.st-card--blue { fill: #EFF6FF; stroke: #93C5FD; }
+.st-card--green { fill: #ECFDF3; stroke: #86EFAC; }
+.st-card--red { fill: #FEF2F2; stroke: #FCA5A5; }
+.st-card--amber { fill: #FFFBEB; stroke: #FCD34D; }
+.st-card--violet { fill: #F5F3FF; stroke: #C4B5FD; }
+.st-box { fill: #EAF2FC; stroke: var(--r-2); stroke-width: 1.8; }
+.st-wh { stroke: var(--r-2); stroke-width: 1.8; }
+.st-err { stroke: var(--ink); stroke-width: 2; }
+.st-err--se { stroke: #9A5B0B; stroke-width: 2.4; }
+.st-err--t { stroke: #0E7A66; stroke-width: 2; }
+.st-mean { stroke: var(--ink); stroke-width: 2.4; }
+.st-fence { stroke: #B42318; stroke-width: 1.5; stroke-dasharray: 5 4; }
+.st-fit { stroke: #C2410C; stroke-width: 2.6; }
+.st-sq-both { fill: #0E7A66; }
+.st-sq-moss { fill: #9FD8B5; }
+.st-sq-heather { fill: #B794D6; }
+.st-sq-neither { fill: #E5E7EB; }
+.st-fulcrum { fill: #E8A33D; stroke: #9A5B0B; stroke-width: 1.2; }
+.st-arrow { stroke: var(--ink-2); stroke-width: 1.6; fill: none; }
+.st-arrowhead { fill: var(--ink-2); }
+.st-small { font: 500 11.5px var(--sans); fill: var(--ink-2); }
+.st-h { font: 650 15px var(--serif); fill: var(--ink); }
+.st-halo { paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
 
 /* ---------- the front page ---------- */
 .home__main { max-width: 1080px; margin: 0 auto; padding: 36px 22px 40px; }

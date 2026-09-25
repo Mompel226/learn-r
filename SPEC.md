@@ -19,6 +19,26 @@ nothing to install, nothing leaves the student's tab. Read this before editing.
 - Statistics are taught as **click-by-click stories** (the `story` block: every step waits for "Next step"),
   each with an amber **analogy**, on the lesson's own example — the way his C4.1 chi-squared slides do it.
 
+## IB · Statistics in R (built 25 Sep 2026; Daniel agreed the stage order)
+Eleven stages, from his `IB_Bio_D3_2.Rmd` Parts A–G, fenced by the IB guide (2025): 1 R in ten minutes (A) ·
+2 averages (B) · 3 look before you test: continuous v discrete, box plot, 1.5 × IQR, outliers justified (C) ·
+4 normal distribution and SD (D.1) · 5 SE (D.2; 95 % CI only as an extension, D.3) · 6 the p-value (coin) ·
+7 which test (E, F; Mann–Whitney, ANOVA, Spearman on an optional shelf) · 8 t-test · 9 χ² (his C4.1 heather and
+moss, 57 · 7 · 9 · 27; HL dihybrid as an extension) · 10 correlation and R² (C2.2.4) · 11 put it together (G:
+messy stomatal-density data, B3.1.10, cleaned → described → graphed → tested → reported).
+- **One running example**: an INVENTED class of 40 (`students`: trains, exercise_h, resting_hr, abo), made in R so
+  the numbers teach (see the header of `js/scenes/ib.js`): SD bars and 95 % CIs overlap yet t-test p = 0.016;
+  28/40 within ± 1 SD; the only outlier is the 112 bpm reading taken after PE. The numbers live ONCE, in
+  `js/scenes/ib.js`; the R table is built from them.
+- **Stories** (`js/scenes/ib.js`): seesaw (mean/median/mode), box plot, normal + SD, SE (100 imagined classes),
+  coin, which test, t (signal ÷ noise), χ², correlation. Each step shows something; each hard idea has an analogy.
+- **Facts**: every number a story or question quotes is in `facts` in `js/courses/ib.js`, and `tools/check.mjs`
+  checks each against R. Change the data → the gate names every sentence that is now wrong.
+- R's defaults that differ from the IB: `t.test()` is Welch's (add `var.equal = TRUE`); `chisq.test()` applies
+  Yates' correction to 2 × 2 tables (add `correct = FALSE`; R gives 42.1, the hand calculation with E to 1 d.p. 42.4).
+- The squirrel counts of his C4.1 homework are NOT used (they would give the answer away); the negative
+  association is an invented heather–bracken survey.
+
 ## The reader
 - IB students fresh from IGCSE, KS3 students aged 12–13; many are Korean EAL learners, many weak at maths.
 - Write to the student: "you", present tense, short sentences, one idea per sentence, British spelling,
@@ -77,6 +97,11 @@ nothing to install, nothing leaves the student's tab. Read this before editing.
 | extension | title, md?, blocks | dashed box; never gate inside it |
 | builder | id, vars (R → [{v,t}]), group?, md? | the plot builder |
 | story | id, title, steps | click-by-click animation (see js/story.js) |
+
+## Stories (the gate)
+`tools/check.mjs` draws every story's scene and fails if a step names a part the scene does not draw, if any step
+leaves the picture empty, or if the scene has NaN/undefined in it. `hide:[…]` moves a picture on; `pan:'part'`
+chooses what a phone scrolls to.
 
 ## Checks (R, run after the student's code)
 The check is R code that returns `TRUE` or the message to show. It can use:
