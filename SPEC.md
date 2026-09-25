@@ -102,3 +102,14 @@ stage without saving (teacher read-through); `?reset=1` forgets progress.
 - Scroll boxes are `position: relative` (a hidden `.sr` label inside one once widened the page to 1560 px),
   and every block has `min-width: 0` (a long line of code once widened a stage).
 - The top bar is not sticky below 900 px.
+
+## Looks (Daniel, 25 Sep 2026: "improve aesthetic… the Start button is not at the same level")
+- The three doors line up row by row (CSS subgrid; flex fallback): art, kicker, title, blurb, meta, Start. The
+  "Never used R?" pill sits in the corner, out of the flow, so it never pushes one door's parts down.
+- A story is **never an empty box**: step 1 must already show something (the coin story opens on the tally,
+  53 heads v 47 tails). He saw only the "Your coin" pill in a big white box and could not follow it.
+- A story's picture is capped at `100vh − 360px`, so the words and **Next step** stay on screen with it; a click
+  keeps the whole block in view. `hide:[…]` lets a picture move on (tally → dots → bars); `pan:'part'` picks what a
+  phone scrolls to. Lay out each step's key part inside a ~340-unit-wide window, so a phone shows it whole.
+- Learn R teaches how a test works and runs it; the Write-Up Lab (Statistical tests) teaches how to choose and
+  report it. Each links to the other.
