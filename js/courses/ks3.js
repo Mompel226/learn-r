@@ -160,6 +160,8 @@
               '- **Environmental**: your surroundings and the way you live, for example food, exercise, sleep and illness.\n\n' +
               'Height has __both__ causes. Your genes set a possible range. Your food and health decide where you are inside that range. Blood group is genetic only.\n\n' +
               'Variation matters for evolution. If everyone were the same, natural selection would have nothing to choose from. When the environment changes, variation helps some individuals, and so the species, survive.' },
+          { type: 'note', title: 'Two ways to sort',
+            md: 'In Year 7 you sorted __data__: numbers you measure (continuous) or count (discrete), and named groups (categorical). Here you sort __variation__, the biology way: continuous or discontinuous. So blood group is __categorical__ data, and it shows __discontinuous__ variation. Two names for two jobs: one for the data, one for the biology.' },
           { type: 'mcq', id: 'ks3-discontinuous', gate: true,
             q: 'Which of these shows __discontinuous__ variation?',
             opts: [
