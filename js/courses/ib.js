@@ -587,7 +587,7 @@
               { title: 'The noise', show: ['sd'], focus: ['sd', 'dotsNo', 'dotsYes', 'means'],
                 md: 'The dots spread widely: SD 7.75 and 8.40 bpm. With so much spread, two samples could differ by chance.\n\nThe **SE of the difference** measures that noise. It combines both SDs and both group sizes: here __2.56 bpm__.' },
               { title: 'Signal ÷ noise = t', show: ['tcalc'],
-                md: '**t** = difference ÷ SE of the difference = 6.45 ÷ 2.56 = __2.52__. The bigger t is, the less likely the difference is chance.',
+                md: '**t** is one number: the difference divided by the size of difference that chance alone typically makes (the SE of the difference). t = 6.45 ÷ 2.56 = __2.52__: the difference is 2.5 times bigger than chance typically makes. The bigger t is, the more rarely chance alone would give it.\n\nThe name comes from “Student”, the pen name of William Gosset, a scientist at the Guinness brewery in Dublin, who published the test in 1908.',
                 analogy: 'Hearing a friend in the canteen. A loud voice (a big difference) in a quiet room (little spread, many students) is easy to hear. A whisper in a noisy room is not.' },
               { title: 'How big is big enough?', hide: ['axis', 'labels', 'dotsNo', 'dotsYes', 'means', 'diff', 'sd', 'h0', 'tcalc'], show: ['tdist', 'tcrit'],
                 md: 'If H₀ were true, t would usually be close to 0. With 38 **degrees of freedom** (df = 40 students − 2 groups), t lands beyond ± 2.02 less than 5 % of the time. 2.02 is the **critical value**.\n\nBoth red ends count, because a difference could go either way: training could have lowered heart rate, or raised it. That makes the test **two-tailed**. It is the normal t-test.' },
