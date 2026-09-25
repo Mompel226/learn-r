@@ -44,8 +44,8 @@ messy stomatal-density data, B3.1.10, cleaned → described → graphed → test
 
 ## The p-value has ONE home: IB stage 6 (the coin)
 Its key step: "if the coin were fair, how often would chance alone give a result like yours?", p as "times in 100",
-and "if p is low, H₀ must go". Later stages quote p as "times in 1,000" and link back to ib.html#p-value in one line.
-Year 8 (no H₀): "low p, significant; high p, not". Never "unlikely to come from chance".
+and "small p, big news; big p, no news". Later stages quote p as "times in 1,000" and link back to ib.html#p-value in one line.
+Year 8: the same line. Never "unlikely to come from chance".
 
 ## The reader
 - IB students fresh from IGCSE, KS3 students aged 12–13; many are Korean EAL learners, many weak at maths.
