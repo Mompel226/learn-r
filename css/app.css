@@ -228,7 +228,6 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 .blk--story { padding-bottom: 12px; scroll-margin-top: 72px; }
 .blk--story:focus { outline: none; }
 .story__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
-.story__words { max-width: 68ch; }
 .story__fig svg { display: block; width: 100%; height: auto; max-height: max(260px, calc(100vh - 360px)); background: #fff; border: 1px solid var(--edge); border-radius: 12px; }
 .story__words { min-height: 150px; }
 .story__step { margin: 0 0 4px; font: 600 .72rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--r); }

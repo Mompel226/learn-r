@@ -164,5 +164,7 @@ stage without saving (teacher read-through); `?reset=1` forgets progress.
 - A story's picture is capped at `100vh − 360px`, so the words and **Next step** stay on screen with it; a click
   keeps the whole block in view. `hide:[…]` lets a picture move on (tally → dots → bars); `pan:'part'` picks what a
   phone scrolls to. Lay out each step's key part inside a ~340-unit-wide window, so a phone shows it whole.
+- A story's words run the full width of the box: no `ch` cap (Daniel, 25 Sep 2026: "make sure they expand the
+  whole width available").
 - Learn R teaches how a test works and runs it; the Write-Up Lab (Statistical tests) teaches how to choose and
   report it. Each links to the other.
