@@ -89,6 +89,8 @@
     ['max(tapply(students$resting_hr, students$trains, sd)) / min(tapply(students$resting_hr, students$trains, sd))', 1.08, 0.005],
     ['wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)$p.value', 0.014, 0.0005],
     ['summary(aov(resting_hr ~ abo, data = students))[[1]][["Pr(>F)"]][1]', 0.75, 0.005],
+    ['sum(!is.na(pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")$p.value))', 6, 0],
+    ['min(pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")$p.value, na.rm = TRUE)', 1, 0],
     ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; t.test(density_mm2 ~ tolower(trimws(leaf)), data = s, var.equal = TRUE)$p.value', 0.025, 0.0005],
     ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; as.numeric(tapply(s$density_mm2, tolower(trimws(s$leaf)), sd))', [19.3, 25.7], 0.05]
   ];
@@ -556,10 +558,10 @@
               { t: 'A correlation', why: 'A correlation needs two measurements on each individual, not one measurement in two groups.' }
             ] },
           { type: 'extension', title: 'The shelf: tests beyond the IB',
-            md: 'You will not need these for the IB exams. You may need them for an IA or an Extended Essay:\n\n- **Mann–Whitney U test**: like the t-test, but for data far from normal. `wilcox.test(resting_hr ~ trains, data = students)`\n- **ANOVA**: three or more groups. `summary(aov(resting_hr ~ abo, data = students))`\n- **Spearman’s rank correlation**: for a relationship that is not a straight line. `cor.test(students$exercise_h, students$resting_hr, method = "spearman")`',
+            md: 'You will not need these for the IB exams. You may need them for an IA or an Extended Essay:\n\n- **Mann–Whitney U test**: like the t-test, but for data far from normal. `wilcox.test(resting_hr ~ trains, data = students)`\n- **ANOVA**: three or more groups. `summary(aov(resting_hr ~ abo, data = students))`\n- **A correction for multiple comparisons**: for t-tests between several pairs. Every extra test is another chance of a false “significant” result. `pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")` R multiplies each p by the number of tests (at most 1), so you still compare it with 0.05.\n- **Spearman’s rank correlation**: for a relationship that is not a straight line. `cor.test(students$exercise_h, students$resting_hr, method = "spearman")`',
             blocks: [
-              { type: 'example', title: 'Try them in any exercise box', code: 'wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)\nsummary(aov(resting_hr ~ abo, data = students))',
-                md: 'Mann–Whitney: p = 0.014, the same decision as the t-test. ANOVA by blood group: p = 0.75. There is no evidence that blood group is linked to resting heart rate, which is what biology expects.' }
+              { type: 'example', title: 'Try them in any exercise box', code: 'wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)\nsummary(aov(resting_hr ~ abo, data = students))\npairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")',
+                md: 'Mann–Whitney: p = 0.014, the same decision as the t-test. ANOVA by blood group: p = 0.75. The 6 pairs of blood groups, corrected: every p = 1, so no pair differs. There is no evidence that blood group is linked to resting heart rate, which is what biology expects.' }
             ] },
           { type: 'note', title: 'The Write-Up Lab chooses with you',
             md: 'The Write-Up Lab’s **Find your test** asks you a few questions about your own investigation, then names the test. [Open Statistical tests in the Write-Up Lab](https://nlcsbiology.com/write-up-lab/#/part/stats).' },
