@@ -52,7 +52,8 @@
     var top = h('header', { class: 'top' }, [
       h('a', { class: 'top__brand', href: './', html: '<span class="top__mark" aria-hidden="true">R</span><span><b>Learn R</b><small>Made by Dr Daniel Mompel Riera · NLCS Jeju</small></span>' }),
       h('div', { class: 'top__course', html: '<small>' + esc(C.kicker || '') + '</small><b>' + esc(C.title) + '</b>' }),
-      status
+      status,
+      h('a', { class: 'tohub', href: 'https://nlcsbiology.com/biology-hub/', text: '← Biology Hub' })
     ]);
     var side = h('nav', { class: 'side', 'aria-label': 'Stages' });
     var main = h('main', { class: 'main', id: 'main', tabindex: '-1' });
