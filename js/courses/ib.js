@@ -483,7 +483,7 @@
               { title: 'Now 80 heads', show: ['m80'], focus: ['m80', 'tails'],
                 md: '80 heads is far out, beyond the red zone. A fair coin almost never does this.\n\nSo you **reject H₀**: the coin is probably not fair.' },
               { title: 'That is the p-value', show: ['p53', 'p80'],
-                md: 'The **p-value** answers one question: __if the coin were fair, how often would chance alone give a result as far from 50 as yours?__\n\n- 53 heads: p = 0.62, so __62 times in 100__. Chance does this all the time. Keep H₀.\n- 80 heads: p = 0.000000001, about __1 time in a billion__. Reject H₀.\n\nThe rule in biology: p __below 0.05__ (5 times in 100, or 1 in 20) means reject H₀. The result is **statistically significant**.\n\nTo remember it: **small p, big news. Big p, no news.**' },
+                md: 'The **p-value** answers one question: __if the coin were fair, how often would chance alone give a result as far from 50 as yours?__\n\n- 53 heads: p = 0.62, so __62 times in 100__. Chance does this all the time. Keep H₀.\n- 80 heads: p = 0.000000001, about __1 time in a billion__. Reject H₀.\n\nThe rule in biology: p __below 0.05__ (5 times in 100, or 1 in 20) means reject H₀. The result is **statistically significant**.' },
               { title: 'What p < 0.05 does not mean', show: [],
                 md: 'It does not __prove__ anything. Even when H₀ is true, chance gives p < 0.05 one time in 20.\n\nAnd p > 0.05 does not prove H₀ is true. It means only that this evidence is not strong enough.',
                 analogy: 'A court that says *not guilty* has not proved the person innocent. It has decided the evidence was not strong enough.' }
