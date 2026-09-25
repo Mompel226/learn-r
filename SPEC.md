@@ -44,7 +44,7 @@ messy stomatal-density data, B3.1.10, cleaned → described → graphed → test
 
 ## The p-value has ONE home: IB stage 6 (the coin)
 Its key step: "if the coin were fair, how often would chance alone give a result like yours?", p as "times in 100",
-and no slogan (see the Write-Up Lab spec). Later stages quote p as "times in 1,000" and link back to ib.html#p-value in one line.
+and "too rare for chance? Stop pretending." (Daniel's choice; see the Write-Up Lab spec). Later stages quote p as "times in 1,000" and link back to ib.html#p-value in one line.
 Year 8: the three steps. Never "unlikely to come from chance".
 
 ## The reader
