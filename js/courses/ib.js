@@ -21,6 +21,9 @@
      9 The χ² test (his C4.1 heather and moss)
     10 Correlation and R²
     11 Put it together             ← G (a messy data set, cleaned, tested, reported)
+    12 Carry on in RStudio         (added 25 Sep 2026 at Daniel's choice: R and RStudio on
+                                   your own computer, and the course as one script,
+                                   data/ib-statistics.R, built by tools/make-ib-script.mjs)
 
    The data and the story pictures live in js/scenes/ib.js (LR.IB). Every
    number a story quotes is in FACTS below and checked in R by tools/check.mjs.
@@ -100,7 +103,7 @@
     packages: ['dplyr', 'ggplot2'],
     setup: SETUP,
     facts: FACTS,
-    finish: 'You have finished Statistics in R. You can describe data, draw it with the right error bars, choose a test, run it in R and report it. For your IA, the Write-Up Lab shows how to present all of this: [Statistical tests in the Write-Up Lab](https://nlcsbiology.com/write-up-lab/#/part/stats).',
+    finish: 'You have finished Statistics in R. You can describe data, draw it with the right error bars, choose a test, run it in R or RStudio and report it. For your IA, the Write-Up Lab shows how to present all of this: [Statistical tests in the Write-Up Lab](https://nlcsbiology.com/write-up-lab/#/part/stats).',
     stages: [
 
       /* ================= 1 · R in ten minutes (Part A) ================= */
@@ -803,6 +806,41 @@
             '___ leaves had a higher mean stomatal density (___ ± ___ mm⁻², n = ___) than ___ leaves (___ ± ___ mm⁻², n = ___).',
             'The difference was significant (t = ___, df = ___, p = ___), so the null hypothesis was rejected.'
           ] }
+        ] },
+
+      /* ================= 12 · Carry on in RStudio ================= */
+      { id: 'rstudio', title: 'Carry on in RStudio',
+        lede: 'Everything you did here runs the same way on your own computer. For your IA or Extended Essay, that is where your data will be.',
+        blocks: [
+          { type: 'goal', md: 'Install R and RStudio, run this course as one script, and open your own data file.' },
+          { type: 'concept', title: 'Why your own computer?',
+            md: 'On this page, R forgets everything when you close the tab. On your own computer, you keep your scripts, open your own spreadsheets and add any package you need. The code is exactly the same.' },
+          { type: 'concept', title: 'Getting R, then RStudio',
+            md: '**R** is the language. **RStudio** is the window you write it in. Install R first: if you install RStudio first, it opens and says that it cannot find R.\n\n' +
+              '- **Mac:** [R for macOS](https://cran.r-project.org/bin/macosx/). Take the .pkg for your Mac: Apple silicon (arm64) for an M-series Mac, Intel (x86_64) for an older one. Not sure? Apple menu → About This Mac.\n' +
+              '- **Windows:** [R for Windows](https://cran.r-project.org/bin/windows/base/). One .exe file: download it, run it, and keep the default settings.\n' +
+              '- **Then RStudio:** [RStudio Desktop](https://posit.co/download/rstudio-desktop/), the free version.\n' +
+              '- **A school laptop or a Chromebook:** you may not be allowed to install programs. Ask IT, or use Posit Cloud (posit.cloud): RStudio in a web browser, with a free account.' },
+          { type: 'analogy', md: 'R is the engine. RStudio is the car around it: the seats, the windows and the dashboard. A car with no engine goes nowhere, so the engine comes first.' },
+          { type: 'note', title: 'This course, as one R script',
+            md: 'The class data, the stomata data, and the answer to every exercise, stage by stage, with the result you should get written under each one.',
+            files: [{ href: 'data/ib-statistics.R', name: 'ib-statistics.R', label: 'Statistics in R: the whole course as one script', size: 'about 12 KB' }] },
+          { type: 'concept', title: 'Run it in RStudio',
+            md: '1. Open RStudio. Choose **File → Open File…** and pick `ib-statistics.R`.\n' +
+              '2. Put the cursor on the first line and press **Ctrl + Enter** (Mac: **Cmd + Enter**). The first time, R installs **dplyr** and **ggplot2**: a few minutes of text. Wait until the `>` comes back in the Console.\n' +
+              '3. Keep pressing **Ctrl + Enter**: R runs one line at a time. Answers appear in the Console, graphs in the Plots panel.\n' +
+              '4. To run it all at once: **Ctrl + Shift + Enter** (Mac: **Cmd + Shift + Enter**).' },
+          { type: 'concept', title: 'Your own data',
+            md: 'Keep your data in a spreadsheet: one row for each measurement, one column for each variable, and one header row with short names and no spaces, such as `leaf` and `density_mm2`. Save it as a **.csv** file. Then read it into R:' },
+          { type: 'example', title: 'Read your own file', code: 'my_data <- read.csv(file.choose())   # a window opens: choose your .csv file\nhead(my_data)                        # the first six rows\nstr(my_data)                         # each column: numbers or text?',
+            md: 'From here, every stage of this course works on your data: change `students` to `my_data`, and the column names to yours. Then clean it as in stage 11 before you trust any number.' },
+          { type: 'mcq', id: 'ib-rstudio-mcq', gate: true, q: 'You open RStudio for the first time, and it says that it cannot find R. What is wrong?',
+            opts: [
+              { t: 'R is not installed yet: install R, then open RStudio again.', ok: true, why: 'RStudio is only the window. R, the language, must be installed first.' },
+              { t: 'The script has a mistake in it.', why: 'RStudio says this before any script is opened. The language itself is missing.' },
+              { t: 'RStudio needs the internet to work.', why: 'R and RStudio run without the internet. Only installing packages needs it.' },
+              { t: 'You need Posit Cloud.', why: 'Posit Cloud is an option without installing anything, but here R is simply not installed yet.' }
+            ] }
         ] }
     ]
   });

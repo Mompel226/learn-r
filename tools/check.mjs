@@ -147,6 +147,16 @@ for (const C of courses) {
   rJobs.length = 0;
 }
 
+/* the IB course as one R script, for RStudio: up to date with the course, and it runs */
+{
+  const { build, OUT } = await import('./make-ib-script.mjs');
+  if (!fs.existsSync(OUT) || fs.readFileSync(OUT, 'utf8') !== build()) E('data/ib-statistics.R is out of date: run node tools/make-ib-script.mjs');
+  else {
+    try { execFileSync('Rscript', ['--vanilla', '-e', `setwd(tempdir()); pdf(NULL); invisible(capture.output(suppressMessages(source(${JSON.stringify(OUT)}))))`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }); console.log('data/ib-statistics.R runs in R'); }
+    catch (e) { E('data/ib-statistics.R stops with an error in R: ' + String(e.stderr || e.message).split('\n').slice(-4).join(' ')); }
+  }
+}
+
 if (warns.length) { console.log('\nwarnings:'); warns.forEach((w) => console.log('  · ' + w)); }
 if (errs.length) { console.log('\nERRORS:'); errs.forEach((e) => console.log('  ✘ ' + e)); process.exit(1); }
 console.log('\n✔ all checks passed');
