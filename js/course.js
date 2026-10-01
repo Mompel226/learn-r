@@ -38,6 +38,23 @@
         return LR.R.eval('.lr_lock_xlsx("upload.xlsx", ' + JSON.stringify(a) + ', ' + JSON.stringify(b) + ')');
       }).then(function () { uploadSheets = [a, b]; P.data = 'upload'; save(); markLocked(); });
     }
+    /* No data is coming by itself when nothing is locked and nothing will lock it: the sample is locked again
+       after R starts, but an uploaded spreadsheet is gone after a reload, and a teacher's ?all=1 jump past the
+       chooser never chose any. Then everything that needs data says so, and how to fix it, instead of waiting
+       for ever. On the stage that holds the chooser it still waits: the choice is right there (30 Sep 2026). */
+    function hasChooser(st) {
+      var f = false;
+      (function walk(bs) { bs.forEach(function (b) { if (b.type === 'dataset') f = true; if (b.blocks) walk(b.blocks); }); })(st.blocks);
+      return f;
+    }
+    var dataStage = 0, chooserHere = false;
+    for (var ds = C.stages.length - 1; ds >= 0; ds--) if (hasChooser(C.stages[ds])) dataStage = ds;
+    function noData() { return !!C.sample && !dataLocked && P.data !== 'sample' && !chooserHere; }
+    function noDataWhy() {
+      return P.data === 'upload'
+        ? 'Your spreadsheet is not loaded any more (the page was reloaded). Go back to stage ' + (dataStage + 1) + ' and upload it again, or use the sample class.'
+        : 'There is no data yet. Go back to stage ' + (dataStage + 1) + ' and choose your data.';
+    }
     /* after a restart R has forgotten the data: put it back */
     LR.on('r:restarted', function () {
       if (!dataLocked) return;
@@ -125,7 +142,7 @@
       passed: function (id) { return !!P.passed[id]; },
       getCode: function (id) { return P.code[id]; },
       setCode: function (id, v) { if (v == null) delete P.code[id]; else P.code[id] = v; save(); },
-      dataReady: function () { return dataPromise; },
+      dataReady: function () { return noData() ? Promise.reject(new Error(noDataWhy())) : dataPromise; },
       render: function (b) { return render(b); }
     };
 
@@ -208,6 +225,8 @@
       main.appendChild(h('p', { class: 'st__k', text: 'Stage ' + (i + 1) + ' of ' + C.stages.length }));
       main.appendChild(h('h1', { class: 'st__h', text: st.title }));
       if (st.lede) main.appendChild(h('p', { class: 'st__lede', html: md(st.lede, { inline: true }) }));
+      chooserHere = hasChooser(st);
+      if (noData()) main.appendChild(h('p', { class: 'fb fb--no', role: 'status', html: esc(noDataWhy()) + ' <a href="#' + esc(C.stages[dataStage].id) + '">Open stage ' + (dataStage + 1) + '</a>' }));
       var body = h('div', { class: 'st__body' });
       st.blocks.forEach(function (b) { body.appendChild(render(b)); });
       main.appendChild(body);

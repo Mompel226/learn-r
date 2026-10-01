@@ -1,15 +1,15 @@
 # =============================================================================
 #  STARCH CALIBRATION CURVE  -  one-click analysis
 #  IB Biology B1.1
-#  Dr Daniel Mompel Riera  -  free to use and adapt with credit (CC BY 4.0)
+#  Dr Daniel Mompel Riera  -  code AGPL-3.0 (see LICENSE); teaching text CC BY-NC-SA 4.0
 #
 #  RUN IT:  press the  Source  button, top right.   (Cmd + Shift + Enter)
 #  FIRST:   fill in the 'Your data' tab of the workbook and SAVE it,
 #           and keep this file in the same folder as the workbook.
 #
 #  This file is the doing. The explanation - what every line means, how to
-#  install R, and why you would use it at all - is in the guide:
-#  "Starch calibration curve in R.html"  (open it in a browser).
+#  install R, and why you would use it at all - is in the guide on Learn R:
+#  https://nlcsbiology.com/learn-r/starch.html
 # =============================================================================
 
 
