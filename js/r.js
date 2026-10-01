@@ -32,7 +32,8 @@
    ============================================================ */
 (function (LR) {
   'use strict';
-  var WEBR_URL = 'https://webr.r-wasm.org/v0.6.0/webr.mjs';
+  /* The webR version is pinned in the import() in ks3.html, ib.html and starch.html (not here):
+     change all three together. */
   var LIMIT_MS = 25000;
   var webR = null, cfg = null, busy = 0, readyResolve, readyReject;
   var R = LR.R = {};

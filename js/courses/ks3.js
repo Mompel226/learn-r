@@ -15,7 +15,8 @@
      8 continuous/discontinuous, genetic/environmental         stage 3
      9 the plot builder, then 6–8 sentences                    stage 11
 
-   The sample data (data/ks3-sample.json) is INVENTED (tools/make-ks3-sample.R):
+   The sample data (data/ks3-sample.json) is INVENTED (tools/make-ks3-sample.R writes it as
+   ks3data.json; it is renamed into data/):
    the class spreadsheet has real pupils' names and never ships.
    ============================================================ */
 (function (LR) {

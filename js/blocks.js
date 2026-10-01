@@ -9,8 +9,9 @@
              (the student fills in numbers R checks) · rquiz (dropdown
              answers whose key R works out from the data)
 
-   A block with gate:true must be passed before the stage's "Continue"
-   appears. ctx.pass(id) records it; ctx.passed(id) reads it.
+   A block with gate:true must be passed before the stage's "Next stage: …"
+   button (or, on the last stage, the finish line) appears. ctx.pass(id)
+   records it; ctx.passed(id) reads it.
    ============================================================ */
 (function (LR) {
   'use strict';
@@ -395,7 +396,7 @@
       sel('colour', 'Colour by group', [{ v: 'yes', t: 'Yes' }, { v: 'no', t: 'No' }]);
       binsLab = sel('bins', 'Bars (bins)', ['5', '6', '8', '10', '12'].map(function (n) { return { v: n, t: n }; }));
       if (!ctx.getCode(s.id)) write(); else { yLab.hidden = true; }
-    });
+    }, function (e) { form.appendChild(h('p', { class: 'fb fb--no', text: e.message || String(e) })); });
     el._refresh = function () { ed.refresh(); };
     return el;
   };

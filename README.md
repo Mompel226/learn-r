@@ -1,6 +1,6 @@
 # Learn R
 
-**Live (when published):** https://nlcsbiology.com/learn-r/
+**Live:** https://nlcsbiology.com/learn-r/
 
 Learn R, the language scientists use for data, with **real R running in the browser**
 ([webR](https://docs.r-wasm.org/webr/)): nothing to install, and nothing a student types or opens
