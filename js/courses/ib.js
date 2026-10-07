@@ -138,7 +138,7 @@
             task: '`head()` shows the first rows. `nrow()` counts the rows. `students$resting_hr` takes one column: the `$` means *the column called*. Run the code. Then add a last line that works out the **mean** of the resting heart rates.',
             code: '# The first six rows\nhead(students)\n# How many students?\nnrow(students)\n# One column: the resting heart rates\nstudents$resting_hr\n',
             solution: 'head(students)\nnrow(students)\nstudents$resting_hr\nmean(students$resting_hr)',
-            check: 'if (!has("mean(students$resting_hr)")) "Add a last line: mean(students$resting_hr)" else if (!isTRUE(all.equal(as.numeric(value), mean(students$resting_hr)))) "Put the mean on the last line." else TRUE',
+            check: 'if (!has("mean(")) "Add a last line: mean(students$resting_hr)" else if (!isTRUE(all.equal(as.numeric(value), mean(students$resting_hr)))) "Put the mean on the last line: mean(students$resting_hr)" else TRUE',
             pass: '73.775 bpm: the mean resting heart rate of all 40 students.' },
           { type: 'mcq', id: 'ib-dollar', gate: true, q: 'What does `students$abo` give you?',
             opts: [
@@ -199,12 +199,12 @@
             solution: 'table(students$abo)\nnames(which.max(table(students$abo)))',
             check: 'if (!identical(as.character(value), "A")) "Add the line names(which.max(table(students$abo))) at the end." else TRUE',
             pass: 'The mode is A: 14 of the 40 students.' },
-          { type: 'mcq', id: 'ib-which-avg', gate: true, q: 'Resting heart rates of 30 students. One reading is 150 bpm, taken just after a race. Which average describes the group best?',
+          { type: 'mcq', id: 'ib-which-avg', gate: true, q: 'Resting heart rates of 30 students. One reading is 150 bpm, and your notes give no reason to remove it. Which average describes the group best?',
             opts: [
-              { t: 'The median', ok: true, why: 'One extreme value pulls the mean, but hardly moves the median.' },
-              { t: 'The mean', why: 'The 150 bpm reading would pull the mean upwards.' },
-              { t: 'The mode', why: 'The mode is for categories. With measurements, the most common value tells you little.' },
-              { t: 'The highest value', why: 'That is the maximum, not an average.' }
+              { t: 'The median: one extreme value hardly moves it', ok: true, why: 'One extreme value pulls the mean, but the middle value stays in the middle, so the median hardly moves.' },
+              { t: 'The mean: it uses every one of the 30 readings', why: 'Using every reading is the problem here: the 150 bpm reading pulls the mean upwards.' },
+              { t: 'The mode: the most common heart rate in the class', why: 'With measurements, many values appear only once, so the most common value tells you little.' },
+              { t: 'The range: it shows how far the readings spread', why: 'The range describes the spread, not the middle, so it is not an average. The 150 bpm reading also makes it much bigger.' }
             ] },
           { type: 'extension', title: 'The geometric mean (beyond the IB guide)',
             md: 'For growth that __multiplies__, such as a population of bacteria that doubles, then halves, then doubles again, the ordinary mean misleads. The **geometric mean** is the right average: `exp(mean(log(x)))`.',
@@ -292,7 +292,7 @@
             task: 'Run the code: R draws a box plot for each group. Then label the axes. Add ` +` at the end of the last line, and a new line: `labs(x = "Trains in a sports team?", y = "Resting heart rate / bpm")`',
             code: 'ggplot(students, aes(x = trains, y = resting_hr)) +\n  geom_boxplot()',
             solution: 'ggplot(students, aes(x = trains, y = resting_hr)) +\n  geom_boxplot() +\n  labs(x = "Trains in a sports team?", y = "Resting heart rate / bpm")',
-            check: 'if (!has("labs(")) "Add + at the end of geom_boxplot(), then a new line with labs( )." else if (!grepl("bpm", code, fixed = TRUE)) "Give the y-axis its unit: y = \\"Resting heart rate / bpm\\"." else TRUE',
+            check: 'xl <- tryCatch(value$labels$x, error = function(e) NULL); yl <- tryCatch(value$labels$y, error = function(e) NULL); if (!has("labs(")) "Add + at the end of geom_boxplot(), then a new line with labs( )." else if (is.null(xl) || !nzchar(trimws(xl)) || identical(xl, "trains")) "Label the x-axis too: x = \\"Trains in a sports team?\\"." else if (is.null(yl) || !grepl("bpm", yl, fixed = TRUE)) "Give the y-axis its unit: y = \\"Resting heart rate / bpm\\"." else TRUE',
             pass: 'Every axis needs a label with its unit. Neither group has an outlier: the reading after PE is not in the table.' },
           { type: 'mcq', id: 'ib-outlier-mcq', gate: true, q: 'Your box plot shows one value beyond the fence. What do you do?',
             opts: [
@@ -360,7 +360,7 @@
             task: 'The IB asks you to show SD as **error bars** (Tool 3). Run the code: the bars only go down. Change `ymax = mean` to `ymax = mean + sd`, so that each bar shows mean ± 1 SD.',
             code: 'summary_hr <- students %>%\n  group_by(trains) %>%\n  summarise(mean = mean(resting_hr), sd = sd(resting_hr))\n\nggplot(summary_hr, aes(x = trains, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean), width = 0.15) +\n  labs(x = "Trains in a sports team?", y = "Mean resting heart rate / bpm")',
             solution: 'summary_hr <- students %>%\n  group_by(trains) %>%\n  summarise(mean = mean(resting_hr), sd = sd(resting_hr))\n\nggplot(summary_hr, aes(x = trains, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.15) +\n  labs(x = "Trains in a sports team?", y = "Mean resting heart rate / bpm")',
-            check: 'if (!has("ymax=mean+sd")) "Change ymax = mean to ymax = mean + sd." else if (!has("ymin=mean-sd")) "Keep ymin = mean - sd." else TRUE',
+            check: 'i <- if (inherits(value, "ggplot")) which(vapply(value$layers, function(l) inherits(l$geom, "GeomErrorbar"), logical(1)))[1] else NA; d <- if (is.na(i)) NULL else tryCatch(ggplot2::layer_data(value, i), error = function(e) NULL); w <- students %>% group_by(trains) %>% summarise(m = mean(resting_hr), s = sd(resting_hr)); if (is.null(d) || is.null(d$ymax)) "Keep geom_errorbar( ) in the graph, and keep the graph as the last thing in your code." else if (!isTRUE(all.equal(sort(d$ymax), sort(w$m + w$s)))) "Change ymax = mean to ymax = mean + sd." else if (!isTRUE(all.equal(sort(d$ymin), sort(w$m - w$s)))) "Keep ymin = mean - sd." else TRUE',
             pass: 'Each bar now runs from mean − 1 SD to mean + 1 SD. In your caption, say what the bars show: “error bars = ± 1 SD (n = 20)”.' },
           { type: 'mcq', id: 'ib-sd-mcq', gate: true, q: 'A group’s resting heart rates are normally distributed, with mean 77 bpm and SD 8 bpm. About 2 in 3 students lie between…',
             opts: [
@@ -439,12 +439,12 @@
               { t: 'The SE gets smaller; the SD gets smaller with more students', why: 'Only the SE gets smaller. The SD describes the students, and 80 students vary as much as 20 do.' },
               { t: 'The SE gets bigger; the SD gets bigger with more students', why: 'More data never makes the mean less precise: SE = SD ÷ √n gets smaller. The SD stays about the same.' }
             ] },
-          { type: 'mcq', id: 'ib-overlap-mcq', gate: true, q: 'The error bars of two groups overlap. What can you write?',
+          { type: 'mcq', id: 'ib-overlap-mcq', gate: true, q: 'The ± 1 SD error bars of two groups overlap. What can you write?',
             opts: [
               { t: 'The graph alone cannot show whether the groups differ: a statistical test is needed.', ok: true, why: 'Overlap does not show a difference, and it does not rule one out. The test decides.' },
-              { t: 'There is no significant difference between the groups: their error bars overlap.', why: 'Only a test can say that. Overlapping bars can still hide a real difference: here the 95 % CIs overlap, yet p = 0.016.' },
+              { t: 'There is no significant difference between the groups: their error bars overlap.', why: 'Only a test can say that. Overlapping bars can still hide a real difference: in the class, the SD bars and even the 95 % CIs overlap, yet p = 0.016.' },
               { t: 'There is a significant difference: one mean is higher than the other on the graph.', why: 'A higher mean on a graph is not enough. "Significant" needs a test, never a graph.' },
-              { t: 'The two means are probably equal: a statistical test is needed to prove it.', why: 'Overlap does not make equal means likely: here the 95 % CIs overlap, yet p = 0.016. And no test can prove that two means are equal.' }
+              { t: 'The two means are probably equal: a statistical test is needed to prove it.', why: 'Overlap does not make equal means likely: in the class, the SD bars and even the 95 % CIs overlap, yet p = 0.016. And no test can prove that two means are equal.' }
             ] },
           { type: 'extension', title: 'The 95 % confidence interval (beyond the IB guide)',
             md: 'A **95 % confidence interval (CI)** is about mean ± 2 SE. If the study were repeated many times, about 95 in 100 of these intervals would contain the true mean. The IB guide asks for SD and SE, not CIs, but many papers use them.\n\nNon-overlapping 95 % CIs mean p < 0.05. Overlapping CIs do __not__ mean “no difference”: here they overlap by about 1 bpm, and p = 0.016.',
@@ -503,7 +503,7 @@
             md: 'Look for the line `p-value = …`.\n\n- `p-value = 0.6173` for 53 heads: more than 0.05, so keep H₀.\n- `p-value = 1.116e-09` for 80 heads. The `e-09` means "move the decimal point 9 places left": 0.000000001116. Less than 0.05, so reject H₀.\n\nR also prints the other hypothesis: `true probability of success is not equal to 0.5`. That is H₁, the alternative hypothesis.' },
           { type: 'mcq', id: 'ib-p-mcq', gate: true, q: 'A test gives p = 0.30. What do you write?',
             opts: [
-              { t: 'There is no significant difference: p > 0.05, so H₀ is not rejected.', ok: true, why: 'Chance alone gives a result like this 30 % of the time: not surprising enough.' },
+              { t: 'There is no significant difference: p > 0.05, so H₀ is not rejected.', ok: true, why: 'If there were no real difference, chance alone would give a result like this 30 times in 100: not rare enough to reject H₀.' },
               { t: 'H₀ is proved true: p > 0.05, so there is no difference between the groups.', why: 'A p-value never proves H₀. The evidence is simply not strong enough to reject it, so a difference may still exist.' },
               { t: 'There is a significant difference: p > 0.05, so H₀ is rejected.', why: 'H₀ is rejected when p < 0.05, not when p > 0.05. Here p = 0.30, so the difference is not significant.' },
               { t: 'There is a 30 % chance that H₀ is true, so the difference is probably real.', why: 'The p-value is how often chance gives your result IF H₀ is true, not the chance that H₀ is true. Here p > 0.05: no significant difference.' }
@@ -607,7 +607,7 @@
             hint: '`t.test(resting_hr ~ trains, data = students, var.equal = TRUE)`',
             pass: '“Two Sample t-test”: t = 2.52, df = 38, p = 0.016.' },
           { type: 'interpret', title: 'Reading R’s answer',
-            md: '- `alternative hypothesis: true difference in means … is not equal to 0`: “not equal” means a difference in either direction counts. The test is **two-tailed**, as in the story: the normal t-test.\n- `t = 2.5233, df = 38, p-value = 0.01593`: the test result. Report t to 2 d.p. and p to 2 significant figures: t = 2.52, df = 38, p = 0.016.\n- `mean in group No 77.00, mean in group Yes 70.55`: the two means.\n- `95 percent confidence interval: 1.28 11.62`: the true difference is probably between 1.3 and 11.6 bpm. It does not include 0, which agrees with p < 0.05.' },
+            md: '- `alternative hypothesis: true difference in means … is not equal to 0`: “not equal” means a difference in either direction counts. The test is **two-tailed**, as in the story: the usual kind of t-test.\n- `t = 2.5233, df = 38, p-value = 0.01593`: the test result. Report t to 2 d.p. and p to 2 significant figures: t = 2.52, df = 38, p = 0.016.\n- `mean in group No 77.00, mean in group Yes 70.55`: the two means.\n- `95 percent confidence interval: 1.28 11.62`: the true difference is probably between 1.3 and 11.6 bpm. It does not include 0, which agrees with p < 0.05.' },
           { type: 'rquiz', id: 'ib-t-report', gate: true, title: 'Complete the report',
             md: 'Choose each number from R’s output.',
             key: 'tt <- t.test(resting_hr ~ trains, data = students, var.equal = TRUE); list(t = sprintf("%.2f", tt$statistic), df = as.character(tt$parameter), p = sprintf("%.3f", tt$p.value), dec = "rejected")',
@@ -617,7 +617,7 @@
             tip: 'Look at the line that starts with t =.' },
           { type: 'mcq', id: 'ib-t-mcq', gate: true, q: 'Another class: t = 0.80, df = 38, p = 0.43. What do you write?',
             opts: [
-              { t: 'There is no significant difference between the means: p > 0.05, so H₀ is not rejected.', ok: true, why: 'Chance alone gives a difference this big 43 % of the time.' },
+              { t: 'There is no significant difference between the means: p > 0.05, so H₀ is not rejected.', ok: true, why: 'If there were no real difference, chance alone would give a difference this big 43 times in 100: not rare enough to reject H₀.' },
               { t: 'The means of the two groups are the same: t is close to 0, so H₀ is proved true.', why: 'The test cannot show that. It only finds no evidence of a difference, and no test proves H₀ true.' },
               { t: 'There is a significant difference between the means: t > 0, so H₀ is rejected.', why: 'The sign of t only shows which mean is bigger. p decides, and p = 0.43 is bigger than 0.05.' },
               { t: 'Training has no effect on heart rate: the test found no significant difference.', why: 'Too strong: one sample, no significant difference found. That is not proof that training has no effect.' }
@@ -797,7 +797,7 @@
             task: 'A dot plot of the two means with ± 1 SD error bars. Fill in the two empty labels: the x-axis is the leaf position; the y-axis is the mean stomatal density, with its unit: `/ mm⁻²`.',
             code: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\ns <- stomata %>% group_by(leaf) %>%\n  summarise(mean = mean(density_mm2), sd = sd(density_mm2))\n\nggplot(s, aes(x = leaf, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.15) +\n  labs(x = "", y = "")',
             solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\ns <- stomata %>% group_by(leaf) %>%\n  summarise(mean = mean(density_mm2), sd = sd(density_mm2))\n\nggplot(s, aes(x = leaf, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.15) +\n  labs(x = "Leaf position", y = "Mean stomatal density / mm⁻²")',
-            check: 'if (has("x=\\"\\"") || has("y=\\"\\"")) "Fill in both labels, between the quote marks." else if (!grepl("mm", code, fixed = TRUE)) "Give the y-axis its unit: / mm⁻² (or / stomata per mm²)." else TRUE',
+            check: 'if (has("x=\\"\\"") || has("y=\\"\\"")) "Fill in both labels, between the quote marks." else if (!grepl("y *= *\\"[^\\"]*mm", code_nc)) "Give the y-axis its unit: / mm⁻² (or / stomata per mm²)." else TRUE',
             pass: 'Caption it: “Figure 1. Dot plot showing the effect of leaf position (sun or shade) on the mean stomatal density (n = 11; error bars = ± 1 SD).”' },
           { type: 'exercise', id: 'ib-final-test', gate: true, title: 'Step 6 · The test',
             task: 'One measurement, two groups, similar spreads, each group roughly normal: the standard t-test. Write it on the empty line: `t.test(density_mm2 ~ leaf, data = stomata, var.equal = TRUE)`.',
