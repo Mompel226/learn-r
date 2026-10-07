@@ -182,7 +182,7 @@
           { type: 'mcq', id: 'st-why', gate: true,
             q: 'Why is this practical a good moment to meet R?',
             opts: [
-              { t: 'Excel gives the right answer too, so you can tell whether a mistake is yours.', ok: true, why: 'Yes. You already know what the answer looks like, so R cannot fool you, and you cannot fool yourself.' },
+              { t: 'Excel gives the right answer too, so you can tell whether a mistake is yours.', ok: true, why: 'Yes. You already know what the right answer looks like, so you can see when your R code, or you, made a mistake.' },
               { t: 'Excel does not fit a line or give R², so R is the right tool for this practical.', why: 'Excel can: `=SLOPE()`, `=INTERCEPT()` and `=RSQ()` do exactly that, and so does a trendline. For six points, Excel is the faster tool.' },
               { t: 'The IB gives extra marks for using R, so the same analysis scores higher than in Excel.', why: 'The IB gives no mark for the tool you use, so the same analysis scores the same in Excel. Use whichever tool gets the analysis right.' },
               { t: 'R fits a more accurate line than Excel, so its answers are closer to the truth.', why: 'Both fit the same straight line by the same method, so they give the same gradient and R². That is why Excel can check R.' }
@@ -341,7 +341,7 @@
               { t: 'The column holds text, not numbers: there is a stray letter or space in it. Fix it now.', ok: true, why: 'Yes. Here "0.414 " has a space inside the quote marks. R cannot do sums with text, so fix it before you go on.' },
               { t: 'The readings are very precise: the quote marks show that each value was measured exactly.', why: '`<chr>` means character: text. The quote marks show that the values are text; they say nothing about how precise the readings are.' },
               { t: 'R has rounded the readings to three decimal places, so each one is less precise than before.', why: 'R has not rounded anything: the values are exactly as typed. `<chr>` means the column is text, so R cannot use it as numbers at all.' },
-              { t: 'Nothing: `<chr>` and `<dbl>` are two names for numbers. The column is ready to use.', why: '`<dbl>` means numbers and `<chr>` means text. `mean()` of a text column gives NA and a warning, not an answer.' }
+              { t: 'It is ready to use. `<chr>` is one more name for numbers with decimals, like `<dbl>`.', why: '`<dbl>` means numbers and `<chr>` means text. `mean()` of a text column gives NA and a warning, not an answer.' }
             ] },
           { type: 'note', title: 'On your own computer: read a file instead',
             md: 'In RStudio you can read a file instead of typing: `read_csv("my_starch_data.csv")` for a .csv file, or `read_excel()` for a workbook. starch_curve.R reads the workbook in this way.\n\n' +
@@ -816,7 +816,7 @@
               'The grey points show the reader everything you measured. The teal points show what you chose to fit. That is what an honest graph does.' },
           { type: 'exercise', id: 'st-line', gate: true, title: 'Your turn: the calibration curve',
             task: 'This is the finished calibration curve, with two mistakes in `geom_smooth()`. Fix them:\n\n' +
-              '- Turn off the grey band: `se = FALSE`.\n' +
+              '- Remove the grey band: `se = FALSE`.\n' +
               '- Stop the line at your last fitted point: delete `fullrange = TRUE`.\n\n' +
               'Run it after each change. Then press **Check my answer**.',
             h: 420,
@@ -847,7 +847,7 @@
               'else if (is.null(l)) "Keep geom_smooth(): it draws the line of best fit."',
               'else if (!is.data.frame(l$data) || nrow(l$data) != 4) "Keep data = straight inside geom_smooth(), so that the line uses only the four fitted points."',
               'else if (!identical(.st_param(l, "method"), "lm")) "Keep method = \\"lm\\": a straight line."',
-              'else if (!isFALSE(.st_param(l, "se"))) "Turn off the grey band: se = FALSE."',
+              'else if (!isFALSE(.st_param(l, "se"))) "Remove the grey band: se = FALSE."',
               'else if (isTRUE(.st_param(l, "fullrange"))) "Stop the line at your last fitted point: delete fullrange = TRUE."',
               'else if (!is.null(e <- .st_draw_error(p))) paste("R cannot draw the graph yet:", e)',
               'else TRUE',
@@ -932,7 +932,7 @@
           { type: 'analogy', title: 'A ruler that stops',
             md: 'The calibration line is a ruler with marks only from 0 to 0.775 absorbance. A reading on the ruler is a measurement. A reading past the end of the ruler is a guess, even when R gives you a number.' },
           { type: 'exercise', id: 'st-check', gate: true, title: 'Your turn: an unknown that is too dark',
-            task: 'Unknown A reads 1.554: far above the top of the fitted range (0.775). The function `check()` says so out loud. So unknown A was diluted (1 cm³ of unknown in 9 cm³ of distilled water: a dilution factor of 10) and read again.\n\n' +
+            task: 'Unknown A reads 1.554: far above the top of the fitted range (0.775). The function `check()` prints a warning when a reading is outside that range. So unknown A was diluted (1 cm³ of unknown in 9 cm³ of distilled water: a dilution factor of 10) and read again.\n\n' +
               'Replace `____` with the dilution factor. Run it, then press **Check my answer**.',
             code: lines(FIT, [
               'read_off <- function(absorbance, dilution = 1) (absorbance - intercept) / slope * dilution',
@@ -991,7 +991,7 @@
             hint: 'The last line is `read_off(unknown_A_dil, 10)`.',
             pass: '0.8146 %. Round it: 0.81 %.' },
           { type: 'mcq', id: 'st-extrap', gate: true,
-            q: 'Unknown A reads 1.554. Your line was fitted from 0 to 0.775. What do you do?',
+            q: 'Unknown A reads 1.554. Your line was fitted to absorbances from 0 to 0.775. What do you do?',
             opts: [
               { t: 'Dilute it, read it again, and multiply the answer by the dilution factor.', ok: true, why: 'Yes. Diluted ten times, it reads 0.321: inside the range, so this is interpolation. 0.0815 % × 10 = 0.81 %.' },
               { t: 'Read it from the line anyway: R still gives a concentration for it, 0.40 %.', why: 'That is extrapolation: 1.554 is above 0.775, where the line says nothing and the real curve bends. R gives you a number either way: a number is not permission to use it.' },
@@ -1025,8 +1025,8 @@
             q: 'You typed a prompt, and pasted the R code that the AI wrote into your IA. What must you do?',
             opts: [
               { t: 'Credit it in the text and in the bibliography, with the prompt you typed and the date.', ok: true, why: 'Yes. Pasting an AI’s output is receiving a product, so you reference it. And you must still be able to explain every line that changes a number.' },
-              { t: 'Nothing: code is not written work, so the IB rules on crediting sources do not apply to it.', why: 'Code is written work too. Code that an AI wrote is a product that you received, and the IB rule covers it.' },
-              { t: 'Nothing, as long as you typed the prompt yourself and changed the colours of the graph.', why: 'Typing the prompt and changing the colours do not make the code yours. Credit it.' },
+              { t: 'Leave it as it is: code is not written work, so the IB rules on crediting sources do not apply to it.', why: 'Code is written work too. Code that an AI wrote is a product that you received, and the IB rule covers it.' },
+              { t: 'List the AI tool in the bibliography at the end, but give no citation where the code is used.', why: 'The IB asks for both: a citation in the text where the code is used, and an entry in the bibliography, with the prompt and the date.' },
               { t: 'Delete it, and write the code again by yourself: the IB does not allow AI tools in the IA.', why: 'The IB does not ban AI tools in the IA: it asks you to credit what an AI produced. Your school may have stricter rules, so check those too.' }
             ] },
           { type: 'note', title: 'R leaves the receipt',

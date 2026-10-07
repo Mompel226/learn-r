@@ -961,7 +961,7 @@
                 tip: 'Run the t-test above once for each measurement. Type p to 4 decimal places (0.0000 for a tiny p), or copy it as R prints it.',
                 pass: 'Your table is right: every p-value and every star.' },
               { type: 'interpret', title: 'What your table means',
-                md: '- A measurement with `*`, `**` or `***`: chance alone would rarely give a difference this big between the two means.\n' +
+                md: '- A measurement with `*`, `**` or `***`: if there were no real difference between the two groups, chance alone would give a difference this big less than 5 times in 100.\n' +
                   '- A measurement with `ns`: this test found no clear evidence of a difference. That does __not__ show that the two groups are the same. With about 15 students in each group, a small real difference is easy to miss.\n' +
                   '- In the sample class, only shoe size is significant: the boys’ mean is bigger. Height, arm span and hand span are `ns`.' }
             ] }
