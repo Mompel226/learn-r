@@ -108,7 +108,7 @@ since the choice is right there (`noData` in `js/course.js`, 30 Sep 2026).
 | example | code, md?, title? | code to read, not run |
 | frames | items (use `___` for gaps), title? | |
 | exercise | id, task, code (starter), check, solution, hint?, pass, gate?, needsData?, w?, h? | Run / Check / Start again. Code is saved per id. |
-| mcq | id, q, opts:[{t, ok, why}], gate?, visual? | exactly one ok; every wrong option has a why |
+| mcq | id, q, opts:[{t, ok, why}], gate?, visual? | exactly one ok; every wrong option has a why; shown in a fresh order (`keepOrder` keeps them as written), so write the wrong ones to `Biology Hub/docs/QUESTION-STANDARD.md` (nothing may point to the right one) |
 | rplot | pickers:[{id, label, from (R → [{v,t}]) or values, default}], code (R with {{id}}), w, h, caption?, md? | R draws it; redraws on change |
 | rtable | code (R → data frame), cols?, md? | |
 | filltable | id, key (R → [{label, …}]), fields:[{key, label, tol?, options?}], gate?, pass?, tip? | numbers accept e-notation |
