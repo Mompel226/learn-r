@@ -183,9 +183,9 @@
             q: 'Why is this practical a good moment to meet R?',
             opts: [
               { t: 'Excel gives the right answer too, so you can tell whether a mistake is yours.', ok: true, why: 'Yes. You already know what the answer looks like, so R cannot fool you, and you cannot fool yourself.' },
-              { t: 'Excel cannot fit a line or give R².', why: 'It can: `=SLOPE()`, `=INTERCEPT()` and `=RSQ()` do exactly that. For six points, Excel is the faster tool.' },
-              { t: 'The IB gives extra marks for using R.', why: 'No mark is given anywhere for using R. Use whichever tool gets the analysis right.' },
-              { t: 'Six data points are too many for Excel.', why: 'One Excel worksheet holds over a million rows. Six points is a small job.' }
+              { t: 'Excel does not fit a line or give R², so R is the right tool for this practical.', why: 'Excel can: `=SLOPE()`, `=INTERCEPT()` and `=RSQ()` do exactly that, and so does a trendline. For six points, Excel is the faster tool.' },
+              { t: 'The IB gives extra marks for using R, so the same analysis scores higher than in Excel.', why: 'The IB gives no mark for the tool you use, so the same analysis scores the same in Excel. Use whichever tool gets the analysis right.' },
+              { t: 'R fits a more accurate line than Excel, so its answers are closer to the truth.', why: 'Both fit the same straight line by the same method, so they give the same gradient and R². That is why Excel can check R.' }
             ] }
         ] },
 
@@ -339,9 +339,9 @@
             q: '`glimpse()` shows this line: `$ abs2 <chr> "0.002", "0.201", "0.414 ", …` What does `<chr>` tell you?',
             opts: [
               { t: 'The column holds text, not numbers: there is a stray letter or space in it. Fix it now.', ok: true, why: 'Yes. Here "0.414 " has a space inside the quote marks. R cannot do sums with text, so fix it before you go on.' },
-              { t: 'The readings are very precise.', why: '`<chr>` means character: text. It says nothing about precision.' },
-              { t: 'R has rounded the readings.', why: 'R has not rounded anything. `<chr>` means the column is text, so R cannot use it as numbers at all.' },
-              { t: 'Nothing: `<chr>` and `<dbl>` are the same.', why: '`<dbl>` means numbers and `<chr>` means text. The mean of a text column is an error.' }
+              { t: 'The readings are very precise: the quote marks show that each value was measured exactly.', why: '`<chr>` means character: text. The quote marks show that the values are text; they say nothing about how precise the readings are.' },
+              { t: 'R has rounded the readings to three decimal places, so each one is less precise than before.', why: 'R has not rounded anything: the values are exactly as typed. `<chr>` means the column is text, so R cannot use it as numbers at all.' },
+              { t: 'Nothing: `<chr>` and `<dbl>` are two names for numbers. The column is ready to use.', why: '`<dbl>` means numbers and `<chr>` means text. `mean()` of a text column gives NA and a warning, not an answer.' }
             ] },
           { type: 'note', title: 'On your own computer: read a file instead',
             md: 'In RStudio you can read a file instead of typing: `read_csv("my_starch_data.csv")` for a .csv file, or `read_excel()` for a workbook. starch_curve.R reads the workbook in this way.\n\n' +
@@ -765,9 +765,9 @@
             q: 'Your line through four standards has R² = 0.9992. Which sentence is right?',
             opts: [
               { t: 'The line accounts for 99.9 % of the variation in absorbance of the four fitted standards.', ok: true, why: 'Yes. R² describes the points you fitted, and only those.' },
-              { t: 'The line is right for all six standards.', why: 'R² says nothing about the two standards you left out. Through all six, R² is only 0.87, and the gradient is wrong.' },
-              { t: 'It proves that absorbance depends on the starch concentration.', why: 'Statistics never prove anything. R² measures how well a straight line fits these four points.' },
-              { t: '99.9 % of the points lie exactly on the line.', why: 'None of the points lies exactly on the line. R² compares the distances to the line with the total variation.' }
+              { t: 'The line is valid for the six standards, including the two that were not used when it was fitted.', why: 'R² describes only the four points you fitted. Through all six standards, R² is only 0.87, and the gradient is wrong.' },
+              { t: 'The line proves that absorbance depends on the starch concentration, because R² is so close to 1.', why: 'Statistics never prove anything, however close R² is to 1. R² measures how well a straight line fits these four points.' },
+              { t: 'The line passes exactly through 99.9 % of the absorbance readings of the four fitted standards.', why: 'R² does not count points on the line, and none of the four lies exactly on it. R² compares the distances to the line with the total variation.' }
             ] },
           { type: 'frames', title: 'Write it in your report',
             items: [
@@ -994,9 +994,9 @@
             q: 'Unknown A reads 1.554. Your line was fitted from 0 to 0.775. What do you do?',
             opts: [
               { t: 'Dilute it, read it again, and multiply the answer by the dilution factor.', ok: true, why: 'Yes. Diluted ten times, it reads 0.321: inside the range, so this is interpolation. 0.0815 % × 10 = 0.81 %.' },
-              { t: 'Read it off the line anyway: R gives 0.40 %.', why: 'That is extrapolation. The line says nothing above 0.775, and the real curve bends there. R gives you a number either way: a number is not permission to use it.' },
+              { t: 'Read it from the line anyway: R still gives a concentration for it, 0.40 %.', why: 'That is extrapolation: 1.554 is above 0.775, where the line says nothing and the real curve bends. R gives you a number either way: a number is not permission to use it.' },
               { t: 'Make the line longer with fullrange = TRUE, and read it from the graph.', why: 'A longer line is still extrapolation, drawn in ink. No standard on the straight part was that dark.' },
-              { t: 'Fit all six standards, so that the line reaches 1.554.', why: 'The top two standards bend. A straight line through all six has the wrong gradient (1.615, not 3.878), so every answer from it would be wrong.' }
+              { t: 'Fit the line through the six standards instead of four, so that it reaches 1.554.', why: 'The top two standards lie on the curved part. A straight line through all six has the wrong gradient (1.615, not 3.878), so every answer from it would be wrong.' }
             ] },
           { type: 'note', title: 'Round the answer',
             md: 'R gives 0.8146 %. Write 0.81 %. Multiplying by 10 multiplies the uncertainty by 10 too, so 0.8146 claims a precision that you do not have.' },
@@ -1025,9 +1025,9 @@
             q: 'You typed a prompt, and pasted the R code that the AI wrote into your IA. What must you do?',
             opts: [
               { t: 'Credit it in the text and in the bibliography, with the prompt you typed and the date.', ok: true, why: 'Yes. Pasting an AI’s output is receiving a product, so you reference it. And you must still be able to explain every line that changes a number.' },
-              { t: 'Nothing: code is not writing, so it does not count.', why: 'Code that an AI wrote is still a product that you received. The IB rule covers it.' },
-              { t: 'Nothing, as long as you changed the colours.', why: 'Changing the look does not make the code yours. Credit it.' },
-              { t: 'Delete it: the IB bans AI tools.', why: 'The IB does not ban AI tools. It asks you to credit what an AI produced. Your school may have stricter rules, so check those too.' }
+              { t: 'Nothing: code is not written work, so the IB rules on crediting sources do not apply to it.', why: 'Code is written work too. Code that an AI wrote is a product that you received, and the IB rule covers it.' },
+              { t: 'Nothing, as long as you typed the prompt yourself and changed the colours of the graph.', why: 'Typing the prompt and changing the colours do not make the code yours. Credit it.' },
+              { t: 'Delete it, and write the code again by yourself: the IB does not allow AI tools in the IA.', why: 'The IB does not ban AI tools in the IA: it asks you to credit what an AI produced. Your school may have stricter rules, so check those too.' }
             ] },
           { type: 'note', title: 'R leaves the receipt',
             md: 'A picture that an AI draws for you cannot be repeated. A script that an AI writes for you can: anyone can run it and get your figure back. That includes you in six months, your teacher, and an examiner who asks how you got that number.\n\nExcel does its working out of sight, one hidden cell at a time. R leaves the receipt. And you can check a script that an AI wrote only if you can read it. After this course, you can.' }

@@ -750,9 +750,9 @@
             opts: [
               { t: 'Nothing yet about whether the difference is real. Only a statistical test can decide that.', ok: true,
                 why: 'Yes. Overlapping SD error bars show that many students in the two groups have similar values. They do not decide whether the two means are really different.' },
-              { t: 'The two groups are the same.', why: 'Overlap does not show that the groups are the same. Only a statistical test can decide whether a difference is real.' },
-              { t: 'The difference between the means is significant.', why: '"Significant" is a word for the result of a statistical test. Error bars alone cannot tell you this.' },
-              { t: 'The group with the longer error bar has the bigger mean.', why: 'The length of an error bar shows the spread (the SD), not the mean. The mean is the top of the bar.' }
+              { t: 'The two groups are the same. The error bars overlap, so the difference is not real.', why: 'Overlapping error bars do not show that the groups are the same, or that the difference is not real. Only a statistical test can decide that.' },
+              { t: 'The difference between the means is significant. One mean is higher than the other.', why: '"Significant" is a word for the result of a statistical test. One mean being higher on a graph does not show that the difference is real.' },
+              { t: 'Nothing yet. More students must be measured until the error bars stop overlapping.', why: 'More students vary as much as before, so SD error bars do not get shorter. A statistical test can decide now.' }
             ] },
           { type: 'interpret', title: 'Reading your bar chart',
             md: '- The top of each bar is the mean. Compare the two bars in one panel: which group has the bigger mean?\n' +

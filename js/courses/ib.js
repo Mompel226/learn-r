@@ -143,9 +143,9 @@
           { type: 'mcq', id: 'ib-dollar', gate: true, q: 'What does `students$abo` give you?',
             opts: [
               { t: 'The blood groups of all 40 students', ok: true, why: '`$` takes one column: every value in it.' },
-              { t: 'The first row of the table', why: 'That is `head(students, 1)`. `$` takes a column, not a row.' },
-              { t: 'The mean blood group', why: 'Blood groups are categories. They have no mean.' },
-              { t: 'The number of students', why: 'That is `nrow(students)`.' }
+              { t: 'The data in the first of the 40 rows', why: 'That is `head(students, 1)`: one row, with every column. `$` takes a column, not a row.' },
+              { t: 'The different blood groups, without repeats', why: 'That is `unique(students$abo)`. `$` gives every value in the column, including the repeats.' },
+              { t: 'The number of students with each blood group', why: 'That is `table(students$abo)`. `$` gives the values themselves, not a count of them.' }
             ] }
         ] },
 
@@ -297,9 +297,9 @@
           { type: 'mcq', id: 'ib-outlier-mcq', gate: true, q: 'Your box plot shows one value beyond the fence. What do you do?',
             opts: [
               { t: 'Look for a reason in your notes. Remove it only if there is one, and say why in the method.', ok: true, why: 'The IB asks you to justify removing or keeping an outlier (Inquiry 2).' },
-              { t: 'Delete it: outliers are mistakes.', why: 'Some outliers are real. Deleting them without a reason hides real variation.' },
-              { t: 'Keep it, and say nothing.', why: 'Keeping it can be right, but say that you checked it, and why you kept it.' },
-              { t: 'Delete the whole group.', why: 'One odd value is no reason to lose all the other data.' }
+              { t: 'Remove it: any value beyond the fence is a mistake. Then say in the method that you removed it.', why: 'The fence marks a value as unusual, not as wrong. Some outliers are real: removing one without a reason hides real variation.' },
+              { t: 'Keep it, and write nothing about it in the method: the box plot already shows that it is there.', why: 'Keeping it can be right, but the IB asks you to justify it: say that you checked it, and why you kept it.' },
+              { t: 'Run the test with it and without it, and report only the result that gives p < 0.05.', why: 'That chooses the result, not the data, and hides the other result. Decide from your notes, before the test, and say why in the method.' }
             ] },
           { type: 'frames', items: [
             'The reading of ___ bpm is an outlier: it is more than 1.5 × IQR above the third quartile (upper fence ___ bpm).',
@@ -435,16 +435,16 @@
           { type: 'mcq', id: 'ib-se-mcq', gate: true, q: 'You measure 80 students in each group instead of 20. What happens?',
             opts: [
               { t: 'The SE gets smaller; the SD stays about the same', ok: true, why: 'SE = SD ÷ √n. More students make the mean more precise, but they vary as much as before.' },
-              { t: 'The SD gets smaller; the SE stays the same', why: 'The other way round. Students do not vary less because you measured more of them.' },
-              { t: 'Both get smaller', why: 'Only the SE. The SD describes the students, and they vary as much as before.' },
-              { t: 'Both get bigger', why: 'More data never makes the mean less precise.' }
+              { t: 'The SD gets smaller; the SE stays about the same size', why: 'SD and SE are swapped here. Students do not vary less because you measured more of them; it is the SE that gets smaller.' },
+              { t: 'The SE gets smaller; the SD gets smaller with more students', why: 'Only the SE gets smaller. The SD describes the students, and 80 students vary as much as 20 do.' },
+              { t: 'The SE gets bigger; the SD gets bigger with more students', why: 'More data never makes the mean less precise: SE = SD ÷ √n gets smaller. The SD stays about the same.' }
             ] },
           { type: 'mcq', id: 'ib-overlap-mcq', gate: true, q: 'The error bars of two groups overlap. What can you write?',
             opts: [
               { t: 'The graph alone cannot show whether the groups differ: a statistical test is needed.', ok: true, why: 'Overlap does not show a difference, and it does not rule one out. The test decides.' },
-              { t: 'There is no significant difference.', why: 'Only a test can say that. Here the 95 % CIs overlap, yet p = 0.016.' },
-              { t: 'There is a significant difference.', why: '“Significant” needs a test, never a graph.' },
-              { t: 'The means are equal.', why: 'Overlap never shows that means are equal.' }
+              { t: 'There is no significant difference between the groups: their error bars overlap.', why: 'Only a test can say that. Overlapping bars can still hide a real difference: here the 95 % CIs overlap, yet p = 0.016.' },
+              { t: 'There is a significant difference: one mean is higher than the other on the graph.', why: 'A higher mean on a graph is not enough. "Significant" needs a test, never a graph.' },
+              { t: 'The two means are probably equal: a statistical test is needed to prove it.', why: 'Overlap does not make equal means likely: here the 95 % CIs overlap, yet p = 0.016. And no test can prove that two means are equal.' }
             ] },
           { type: 'extension', title: 'The 95 % confidence interval (beyond the IB guide)',
             md: 'A **95 % confidence interval (CI)** is about mean ± 2 SE. If the study were repeated many times, about 95 in 100 of these intervals would contain the true mean. The IB guide asks for SD and SE, not CIs, but many papers use them.\n\nNon-overlapping 95 % CIs mean p < 0.05. Overlapping CIs do __not__ mean “no difference”: here they overlap by about 1 bpm, and p = 0.016.',
@@ -504,9 +504,9 @@
           { type: 'mcq', id: 'ib-p-mcq', gate: true, q: 'A test gives p = 0.30. What do you write?',
             opts: [
               { t: 'There is no significant difference: p > 0.05, so H₀ is not rejected.', ok: true, why: 'Chance alone gives a result like this 30 % of the time: not surprising enough.' },
-              { t: 'H₀ is proved true.', why: 'A p-value never proves H₀. The evidence is simply not strong enough to reject it.' },
-              { t: 'There is a significant difference, because p is small.', why: 'Significant means p < 0.05. 0.30 is bigger than 0.05.' },
-              { t: 'There is a 30 % chance that H₀ is true.', why: 'The p-value is how often chance gives your result IF H₀ is true, not the chance that H₀ is true.' }
+              { t: 'H₀ is proved true: p > 0.05, so there is no difference between the groups.', why: 'A p-value never proves H₀. The evidence is simply not strong enough to reject it, so a difference may still exist.' },
+              { t: 'There is a significant difference: p > 0.05, so H₀ is rejected.', why: 'H₀ is rejected when p < 0.05, not when p > 0.05. Here p = 0.30, so the difference is not significant.' },
+              { t: 'There is a 30 % chance that H₀ is true, so the difference is probably real.', why: 'The p-value is how often chance gives your result IF H₀ is true, not the chance that H₀ is true. Here p > 0.05: no significant difference.' }
             ] },
           { type: 'frames', items: [
             'The null hypothesis (H₀) is that ___.',
@@ -618,9 +618,9 @@
           { type: 'mcq', id: 'ib-t-mcq', gate: true, q: 'Another class: t = 0.80, df = 38, p = 0.43. What do you write?',
             opts: [
               { t: 'There is no significant difference between the means: p > 0.05, so H₀ is not rejected.', ok: true, why: 'Chance alone gives a difference this big 43 % of the time.' },
-              { t: 'The means are the same.', why: 'The test cannot show that. It only finds no evidence of a difference.' },
-              { t: 'There is a significant difference: t is positive.', why: 'The sign of t only shows which mean is bigger. p decides.' },
-              { t: 'Training has no effect on heart rate.', why: 'Too strong: one sample, no significant difference found. That is not proof of no effect.' }
+              { t: 'The means of the two groups are the same: t is close to 0, so H₀ is proved true.', why: 'The test cannot show that. It only finds no evidence of a difference, and no test proves H₀ true.' },
+              { t: 'There is a significant difference between the means: t > 0, so H₀ is rejected.', why: 'The sign of t only shows which mean is bigger. p decides, and p = 0.43 is bigger than 0.05.' },
+              { t: 'Training has no effect on heart rate: the test found no significant difference.', why: 'Too strong: one sample, no significant difference found. That is not proof that training has no effect.' }
             ] },
           { type: 'frames', items: [
             'The mean resting heart rate of students who train (___ bpm) was significantly lower than that of students who do not (___ bpm): t = ___, df = ___, p = ___.',
@@ -682,9 +682,9 @@
           { type: 'mcq', id: 'ib-chi-mcq', gate: true, q: 'A 2 × 2 table gives χ² = 2.6. Do you reject H₀?',
             opts: [
               { t: 'No: 2.6 is below the critical value of 3.84 (df = 1), so p > 0.05.', ok: true, why: 'The difference between O and E could be chance, so no association is shown.' },
-              { t: 'Yes: χ² is bigger than 0.', why: 'χ² is almost never exactly 0. It must pass the critical value, 3.84.' },
-              { t: 'Yes: 2.6 is bigger than 0.05.', why: 'Compare χ² with the critical value, and p with 0.05. Never χ² with 0.05.' },
-              { t: 'You cannot tell without the p-value.', why: 'The critical value tells you: below 3.84 means p > 0.05.' }
+              { t: 'Yes: χ² = 2.6 is bigger than 0, so the observed counts differ from those expected.', why: 'O and E nearly always differ a little, so χ² is almost never exactly 0. It must pass the critical value, 3.84.' },
+              { t: 'Yes: 2.6 is bigger than 0.05, so the result is significant and H₀ is rejected.', why: '2.6 is χ², not p. Compare χ² with the critical value (3.84), and p with 0.05: never χ² with 0.05.' },
+              { t: 'You need the p-value first: χ² = 2.6 alone does not show whether to reject H₀.', why: 'The critical value tells you: with df = 1, a χ² below 3.84 means p > 0.05, so H₀ is not rejected.' }
             ] },
           { type: 'extension', title: 'Higher level only: χ² for a dihybrid cross (D3.2.21)',
             md: 'At HL, the same test checks a cross against a ratio. Mendel’s peas: 315 round yellow, 108 round green, 101 wrinkled yellow, 32 wrinkled green. Do they fit 9 : 3 : 3 : 1? df = 4 categories − 1 = 3.',
@@ -745,9 +745,9 @@
           { type: 'mcq', id: 'ib-r2-mcq', gate: true, q: 'Axon diameter and nerve conduction speed: R² = 0.81. What does it mean?',
             opts: [
               { t: '81 % of the variation in speed is explained by the variation in axon diameter.', ok: true, why: 'R² is the share of the variation in y that the line through x explains.' },
-              { t: '81 % of the axons are fast.', why: 'R² is about variation, not about how many individuals.' },
-              { t: 'A thicker axon causes 81 % more speed.', why: 'R² says nothing about cause, or about the size of the change.' },
-              { t: 'The correlation is not significant.', why: 'R² is not a p-value. Use cor.test() for significance.' }
+              { t: '81 % of the axons measured lie close to the line, and the other 19 % lie far from it.', why: 'R² is about variation, not about how many axons. It does not count the points that lie close to the line.' },
+              { t: 'The gradient of the line is 0.81: speed rises by 0.81 when axon diameter rises by 1.', why: 'R² is not the gradient, and it says nothing about the size of the change. `lm()` gives the gradient as a separate number.' },
+              { t: 'The correlation is not significant: R² = 0.81 is bigger than 0.05, so H₀ is not rejected.', why: 'R² is not a p-value, so comparing it with 0.05 means nothing. Use `cor.test()` for significance.' }
             ] },
           { type: 'note', title: 'In the IB guide',
             md: 'C2.2.4 uses nerve impulses: conduction speed is positively correlated with axon diameter, and negatively correlated with animal size. You should describe positive and negative correlations, use r for their strength, and use R² for how much of the variation the line explains.' },
@@ -849,9 +849,9 @@
           { type: 'mcq', id: 'ib-rstudio-mcq', gate: true, q: 'You open RStudio for the first time, and it says that it cannot find R. What is wrong?',
             opts: [
               { t: 'R is not installed yet: install R, then open RStudio again.', ok: true, why: 'RStudio is only the window. R, the language, must be installed first.' },
-              { t: 'The script has a mistake in it.', why: 'RStudio says this before any script is opened. The language itself is missing.' },
-              { t: 'RStudio needs the internet to work.', why: 'R and RStudio run without the internet. Only installing packages needs it.' },
-              { t: 'You need Posit Cloud.', why: 'Posit Cloud is an option without installing anything, but here R is simply not installed yet.' }
+              { t: 'The script has a mistake in it: correct the code, then run the script again.', why: 'RStudio says this before any script is opened. The language itself, R, is missing.' },
+              { t: 'RStudio finds R online: connect to the internet, then open RStudio again.', why: 'RStudio looks for R on this computer, not online. R and RStudio run without the internet; it is needed only to download them and to install packages.' },
+              { t: 'RStudio did not install properly: install RStudio again, then open it.', why: 'RStudio itself works: it is the program that shows the message. R, the language, is what is missing.' }
             ] }
         ] }
     ]
