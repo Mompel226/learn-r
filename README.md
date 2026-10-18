@@ -19,5 +19,7 @@ the student's browser.
 Made by Dr Daniel Mompel Riera, NLCS Jeju. Code: AGPL-3.0 (LICENSE). Teaching material: CC BY-NC-SA 4.0
 (LICENSE-CONTENT). See NOTICE.
 
+The `tools/` named here stay on Daniel's computer: they are not in this repository (since 18 Oct 2026), except `tools/live-check.mjs`, which GitHub runs every week to check that R still starts on the live pages.
+
 For whoever edits it next: read `SPEC.md`, then run `node tools/check.mjs` (it runs every model answer in
 real R). The KS3 sample class is invented (`tools/make-ks3-sample.R`).

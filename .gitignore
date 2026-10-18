@@ -1,2 +1,8 @@
 tools/.check-*.R
 .DS_Store
+
+# The build and check tools and local settings stay on Daniel's computer, not on GitHub (18 Oct 2026); the one
+# exception is the weekly "R still starts" check, which GitHub runs (.github/workflows/r-starts.yml)
+/tools/*
+!/tools/live-check.mjs
+/.claude/
