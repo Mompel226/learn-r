@@ -1,7 +1,7 @@
 # ============================================================
 # Statistics in R · IB Biology · Learn R
 # https://nlcsbiology.com/learn-r/ib.html
-# Dr Daniel Mompel Riera · NLCS Jeju · CC BY-NC-SA 4.0
+# Dr Daniel Mompel Riera · CC BY-NC-SA 4.0
 #
 # The whole course as one script: the data, and the answer to every exercise,
 # stage by stage, with the result you should get. The data are INVENTED, for learning.

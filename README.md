@@ -16,7 +16,7 @@ leaves their computer. Three courses, one look:
 Stages open one at a time: the next opens when the tasks of the one before are done. Progress is saved in
 the student's browser.
 
-Made by Dr Daniel Mompel Riera, NLCS Jeju. Code: AGPL-3.0 (LICENSE). Teaching material: CC BY-NC-SA 4.0
+Made by Dr Daniel Mompel Riera. Code: AGPL-3.0 (LICENSE). Teaching material: CC BY-NC-SA 4.0
 (LICENSE-CONTENT). See NOTICE.
 
 The `tools/` named here stay on Daniel's computer: they are not in this repository (since 18 Oct 2026), except `tools/live-check.mjs`, which GitHub runs every week to check that R still starts on the live pages.
