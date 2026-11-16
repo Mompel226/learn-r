@@ -509,7 +509,7 @@
               { t: 'There is a 30 % chance that H₀ is true, so the difference is probably real.', why: 'The p-value is how often chance gives your result IF H₀ is true, not the chance that H₀ is true. Here p > 0.05: no significant difference.' }
             ] },
           { type: 'frames', items: [
-            'The null hypothesis (H₀) is that ___.',
+            'The null hypothesis (H₀) is that ___; the alternative hypothesis (H₁) is that ___. Write both just before the test.',
             'The p-value is ___, which is less than 0.05, so H₀ is rejected: there is a significant ___.',
             'The p-value is ___, which is more than 0.05, so H₀ is not rejected: there is no significant ___.'
           ] }
@@ -812,7 +812,7 @@
             pass: 'Every step, from raw data to a reported test.',
             tip: 'Use the output of steps 4 and 6.' },
           { type: 'interpret', title: 'A model report',
-            md: 'Two leaves were excluded: one was torn and not counted, and one count of 1980 mm⁻², about ten times any other, was most likely a typing error. Sun leaves had a higher mean stomatal density (206.0 ± 25.7 mm⁻², n = 11) than shade leaves (182.5 ± 19.3 mm⁻², n = 11). The standard deviations were similar, so a standard t-test was used: the difference was significant (t = 2.42, df = 20, p = 0.025), and the null hypothesis was rejected. More light on the sunny side may favour more stomata for gas exchange, but the leaves also differed in temperature and humidity, so the cause is not shown.' },
+            md: 'Two leaves were excluded: one was torn and not counted, and one count of 1980 mm⁻², about ten times any other, was most likely a typing error. Sun leaves had a higher mean stomatal density (206.0 ± 25.7 mm⁻², n = 11) than shade leaves (182.5 ± 19.3 mm⁻², n = 11). The standard deviations were similar, so a standard t-test was used (H₀: no difference in mean stomatal density between sun and shade leaves; H₁: a difference): the difference was significant (t = 2.42, df = 20, p = 0.025), and the null hypothesis was rejected. More light on the sunny side may favour more stomata for gas exchange, but the leaves also differed in temperature and humidity, so the cause is not shown.' },
           { type: 'frames', items: [
             '___ leaves were excluded because ___.',
             '___ leaves had a higher mean stomatal density (___ ± ___ mm⁻², n = ___) than ___ leaves (___ ± ___ mm⁻², n = ___).',
