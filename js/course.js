@@ -107,7 +107,6 @@
       (function walk(bs) { bs.forEach(function (b) { if (b.gate) g.push(b.id); if (b.blocks) walk(b.blocks); }); })(st.blocks);
       return g;
     }
-    function stageComplete(st) { return gatesOf(st).every(function (id) { return P.passed[id]; }); }
 
     function drawSide(cur) {
       side.innerHTML = '';
