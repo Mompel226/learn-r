@@ -8,10 +8,12 @@
    statistics; D3.2.14's "discrete" example in genetics). Made in R (25 Sep 2026) so that the numbers teach:
      do not train  mean 77.00  SD 7.75  SE 1.73  95 % CI 73.37–80.63  (n = 20)
      train         mean 70.55  SD 8.40  SE 1.88  95 % CI 66.62–74.48  (n = 20)
-     t = 2.52, df = 38, p = 0.016 (SE of the difference 2.56; critical t 2.02)
+     Welch's t-test (R's default; guide 8, 27 Nov 2026): t = 2.52, df = 37.8, p = 0.016
+       (SE of the difference 2.56; critical t 2.02)
        · the SD bars overlap and the 95 % CIs overlap by 1.1 bpm, yet p < 0.05
      whole class  mean 73.8, SD 8.6: 28 of 40 within ± 1 SD (70 %), 38 of 40 within ± 2 SD
-     exercise_h v resting_hr: r = −0.50, p = 0.0009, R² = 0.25, line 79.46 − 1.373 x
+     exercise_h v resting_hr: r = −0.50, p = 0.0009, R² = 0.25, line 79.46 − 1.373 x;
+       the residuals form one rough bell (Shapiro–Wilk p = 0.92), student 26 the largest (+18.4 bpm)
      no 1.5 × IQR outliers in either group; the extra reading of 112 bpm (after PE) is one
      blood groups O 11, A 14, B 11, AB 4 (mode A), spread evenly across the two groups
    The χ² story uses the heather and moss survey of Daniel's C4.1 slides 49–62
@@ -248,8 +250,8 @@
       S.g('b2', col(222, ['One measurement,', 'two groups'], 'a number for each', 't-test', ['resting heart rate:', 'train v do not train'], 'st-card--blue')) +
       S.g('b3', col(426, ['Two measurements', 'on each individual'], 'pairs of numbers', 'correlation', ['hours of exercise and', 'resting heart rate'], 'st-card--amber')) +
       S.g('ccond', cond(18, 'Check first', ['Every expected count', 'is at least 5.'], 'st-card--green')) +
-      S.g('tcond', cond(222, 'Check first', ['Each group roughly normal?', 'Similar SDs? If not: Welch’s', 't-test (R’s default).'], 'st-card--blue')) +
-      S.g('shelf', cond(426, 'Beyond the IB', ['Not normal: Mann–Whitney.', 'Three or more groups:', 'ANOVA.'], 'st-card'));
+      S.g('tcond', cond(222, 'Check first', ['Each group roughly normal?', 'Check each group on its own,', 'then Welch’s t-test.'], 'st-card--blue')) +
+      S.g('shelf', cond(426, 'Beyond the IB', ['Not normal: Mann–Whitney.', 'Three or more groups:', 'ANOVA or Kruskal–Wallis.'], 'st-card'));
   };
 
   /* ============ stage 8 · the t-test: signal and noise ============ */
@@ -275,7 +277,7 @@
         hbar(S, xs, mY - sY, mY + sY, yY + 16, 'st-err--t') + S.text(xs(mY + sY) + 8, yY + 20, 'SD 8.40', { cls: 'st-small', anchor: 'start' })) +
       S.g('tcalc', card(S, 400, 8, 230, 58, 'st-card--amber') + S.text(515, 32, 't = difference ÷ SE of difference', { cls: 'st-small' }) + S.text(515, 56, 't = 6.45 ÷ 2.56 = 2.52', { cls: 'st-h' })) +
       S.g('tdist', S.line(90, tB, 590, tB, 'st-ax') + [-3, -2, -1, 0, 1, 2, 3].map(function (v) { return S.line(tx(v), tB, tx(v), tB + 5, 'st-ax') + S.text(tx(v), tB + 20, v, { cls: 'st-tick' }); }).join('') +
-        S.text(340, tB + 42, 'Values of t if H₀ is true (df = 38)', { cls: 'st-lab' }) + '<path d="' + tcurve + '" class="st-curve"/>') +
+        S.text(340, tB + 42, 'Values of t if H₀ is true (df = 37.8)', { cls: 'st-lab' }) + '<path d="' + tcurve + '" class="st-curve"/>') +
       S.g('tcrit', tail(-4, -2.024) + tail(2.024, 4) + S.line(tx(-2.024), tB, tx(-2.024), tT + 60, 'st-fence') + S.line(tx(2.024), tB, tx(2.024), tT + 60, 'st-fence') +
         S.text(tx(-2.024), tT + 52, '−2.02', { cls: 'st-lab', fill: '#B42318' }) + S.text(tx(2.024), tT + 52, '2.02', { cls: 'st-lab', fill: '#B42318' }) + S.text(340, tT - 14, 'beyond ± 2.02: less than 5 % of the time', { cls: 'st-lab', fill: '#B42318' })) +
       S.g('tmark', S.line(tx(2.523), tB, tx(2.523), tT + 10, 'st-hot') + '<circle cx="' + tx(2.523) + '" cy="' + (tT + 10) + '" r="5" class="st-dot st-dot--hot"/>' +
@@ -333,6 +335,9 @@
     var fit = function (x) { return 79.457 - 1.3733 * x; };
     return '' +
       S.g('axes', S.axes({ x0: 80, x1: 600, y0: 300, y1: 60, xs: xs, ys: ys, xTicks: [0, 2, 4, 6, 8, 10], yTicks: [50, 60, 70, 80, 90, 100], xLabel: 'Exercise / hours per week', yLabel: 'Resting heart rate / bpm' })) +
+      /* each student's residual: from the line straight up or down to the point (drawn under the points) */
+      S.g('resid', D.exercise_h.map(function (x, i) { return S.line(xs(x), ys(fit(x)), xs(x), ys(D.resting_hr[i]), 'st-err--t'); }).join('') +
+        S.text(xs(5) - 8, ys(84), 'residual', { cls: 'st-lab', anchor: 'end', fill: '#0E7A66' })) +
       S.g('pts', pts) +
       S.g('trend', arrow(S, xs(0.6), ys(90), xs(8.8), ys(58)) + S.text(xs(0.2), ys(53), 'more exercise, lower heart rate', { cls: 'st-lab st-halo', anchor: 'start' })) +
       S.g('rscale', card(S, 380, 10, 240, 60, 'st-card--amber') + S.line(rx(-1), 48, rx(1), 48, 'st-ax') + [-1, 0, 1].map(function (v) { return S.line(rx(v), 44, rx(v), 52, 'st-ax') + S.text(rx(v), 64, (v > 0 ? '+' : '') + v, { cls: 'st-tick' }); }).join('') +

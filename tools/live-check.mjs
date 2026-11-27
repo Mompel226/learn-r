@@ -13,7 +13,7 @@ import { chromium, webkit } from 'playwright';
 
 const BASE = process.env.BASE || 'https://nlcsbiology.com/learn-r/';
 const PAGES = [
-  { page: 'ib.html', r: 't.test(resting_hr ~ trains, data = students, var.equal = TRUE)$p.value', want: '0.0159' },
+  { page: 'ib.html', r: 't.test(resting_hr ~ trains, data = students)$p.value', want: '0.0159' },
   { page: 'ks3.html', r: 'packageVersion("ggplot2") >= "3.0.0"', want: 'TRUE' },
   { page: 'starch.html', r: 'exists("starch_example")', want: 'TRUE' }
 ];

@@ -133,17 +133,21 @@ binom.test(80, 100)
 
 # ==== Stage 7 · Which test? ===================================================================
 
-# ---- Your turn · similar spread?
-sds <- tapply(students$resting_hr, students$trains, sd)
-sds
-max(sds) / min(sds)
-# You should get: 1.08: far below 2. The spreads are similar, so the standard t-test fits.
+# ---- Your turn · check each group on its own
+ggplot(students, aes(x = resting_hr)) +
+  geom_histogram(binwidth = 6, boundary = 54, fill = "#9DB9DC", colour = "white") +
+  labs(x = "Resting heart rate / bpm", y = "Number of students") +
+  facet_wrap(~ trains)
+# You should get: One histogram for each group, and each is roughly a bell shape, so the t-test can
+# be used. The t-test compares each value with the mean of its own group: that is why you check each
+# group on its own.
 
 # ==== Stage 8 · The t-test ====================================================================
 
 # ---- Your turn · the t-test in R
-t.test(resting_hr ~ trains, data = students, var.equal = TRUE)
-# You should get: “Two Sample t-test”: t = 2.52, df = 38, p = 0.016.
+tapply(students$resting_hr, students$trains, mean)
+t.test(resting_hr ~ trains, data = students)
+# You should get: “Welch Two Sample t-test”: t = 2.52, df = 37.8, p = 0.016.
 
 # ==== Stage 9 · The χ² test ===================================================================
 
@@ -176,10 +180,6 @@ test$expected
 
 # ==== Stage 10 · Correlation and R² ===========================================================
 
-# ---- Your turn · r and its p-value
-cor.test(students$exercise_h, students$resting_hr)
-# You should get: r = −0.50, p = 0.00091: a significant negative correlation.
-
 # ---- Your turn · the line of best fit
 ggplot(students, aes(x = exercise_h, y = resting_hr)) +
   geom_point(size = 2.5) +
@@ -193,6 +193,21 @@ model <- lm(resting_hr ~ exercise_h, data = students)
 coef(model)
 summary(model)$r.squared
 # You should get: R² = 0.25. And r² = (−0.504)² = 0.254: for a straight line, R² is r squared.
+
+# ---- Your turn · check the residuals
+model <- lm(resting_hr ~ exercise_h, data = students)
+d <- data.frame(heart_rate = students$resting_hr, residual = resid(model))
+
+ggplot(d, aes(x = residual)) +
+  geom_histogram(binwidth = 6, fill = "#9FD8C8", colour = "white") +
+  labs(y = "Number of students")
+# You should get: The residuals form one rough bell shape around 0, and on the scatter graph the
+# points spread roughly evenly along the line: Pearson’s r and its p-value can be used. Far from a
+# bell? Use Spearman’s rank correlation (beyond the IB guide).
+
+# ---- Your turn · r and its p-value
+cor.test(students$exercise_h, students$resting_hr)
+# You should get: r = −0.50, p = 0.00091: a significant negative correlation.
 
 # ==== Stage 11 · Put it together ==============================================================
 
@@ -225,8 +240,7 @@ stomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)
 stomata %>%
   group_by(leaf) %>%
   summarise(mean = mean(density_mm2), sd = sd(density_mm2), n = n())
-# You should get: Sun: 206.0 ± 25.7 stomata per mm² (n = 11). Shade: 182.5 ± 19.3 (n = 11). The
-# larger SD is less than twice the smaller: similar spreads.
+# You should get: Sun: 206.0 ± 25.7 stomata per mm² (n = 11). Shade: 182.5 ± 19.3 (n = 11).
 
 # ---- Step 5 · The graph
 stomata <- stomata_raw
@@ -242,12 +256,26 @@ ggplot(s, aes(x = leaf, y = mean)) +
 # You should get: Caption it: “Figure 1. Dot plot showing the effect of leaf position (sun or shade)
 # on the mean stomatal density (n = 11; error bars = ± 1 SD).”
 
-# ---- Step 6 · The test
+# ---- Step 6 · Check each group on its own
 stomata <- stomata_raw
 stomata$leaf <- tolower(trimws(stomata$leaf))
 stomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)
-t.test(density_mm2 ~ leaf, data = stomata, var.equal = TRUE)
-# You should get: t = −2.42, df = 20, p = 0.025. (t is negative only because R takes shade − sun:
+
+ggplot(stomata, aes(x = density_mm2)) +
+  geom_histogram(binwidth = 20, boundary = 150, fill = "#9FD8B5", colour = "white") +
+  labs(x = "Stomatal density / mm⁻²", y = "Number of leaves") +
+  facet_wrap(~ leaf)
+# You should get: One histogram for each group. With 11 leaves in a group a histogram is lumpy, so
+# this is only a rough check: neither group is far from a bell shape (no long tail, no second peak),
+# so Welch’s t-test can be used. (A group far from a bell shape: the Mann–Whitney U test, beyond the
+# IB guide.)
+
+# ---- Step 7 · The test
+stomata <- stomata_raw
+stomata$leaf <- tolower(trimws(stomata$leaf))
+stomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)
+t.test(density_mm2 ~ leaf, data = stomata)
+# You should get: t = −2.42, df = 18.5, p = 0.026. (t is negative only because R takes shade − sun:
 # shade comes first in the alphabet.)
 
 # ==== Your own data ==========================================================

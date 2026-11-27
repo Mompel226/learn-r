@@ -23,7 +23,7 @@ nothing to install, nothing leaves the student's tab. Read this before editing.
 Twelve stages, from his `IB_Bio_D3_2.Rmd` Parts A–G, fenced by the IB guide (2025): 1 R in ten minutes (A) ·
 2 averages (B) · 3 look before you test: continuous v discrete, box plot, 1.5 × IQR, outliers justified (C) ·
 4 normal distribution and SD (D.1) · 5 SE (D.2; 95 % CI only as an extension, D.3) · 6 the p-value (coin) ·
-7 which test (E, F; Mann–Whitney, ANOVA, Spearman on an optional shelf) · 8 t-test · 9 χ² (his C4.1 heather and
+7 which test (E, F; Mann–Whitney, ANOVA or Kruskal–Wallis, Spearman on an optional shelf) · 8 t-test · 9 χ² (his C4.1 heather and
 moss, 57 · 7 · 9 · 27; HL dihybrid as an extension) · 10 correlation and R² (C2.2.4) · 11 put it together (G:
 messy stomatal-density data, B3.1.10, cleaned → described → graphed → tested → reported) · 12 carry on in RStudio
 (install R then RStudio, the whole course as ONE script `data/ib-statistics.R`, read your own .csv).
@@ -37,10 +37,37 @@ messy stomatal-density data, B3.1.10, cleaned → described → graphed → test
   coin, which test, t (signal ÷ noise), χ², correlation. Each step shows something; each hard idea has an analogy.
 - **Facts**: every number a story or question quotes is in `facts` in `js/courses/ib.js`, and `tools/check.mjs`
   checks each against R. Change the data → the gate names every sentence that is now wrong.
-- R's defaults that differ from the IB: `t.test()` is Welch's (add `var.equal = TRUE`); `chisq.test()` applies
-  Yates' correction to 2 × 2 tables (add `correct = FALSE`; R gives 42.1, the hand calculation with E to 1 d.p. 42.4).
+- R's defaults: `t.test()` is Welch's t-test, the course's test for two groups (guide 8, below: never add
+  `var.equal = TRUE`, which makes Student's t-test); `chisq.test()` applies Yates' correction to 2 × 2 tables, which
+  the IB test does not (add `correct = FALSE`; R gives 42.1, the hand calculation with E to 1 d.p. 42.4).
 - The squirrel counts of his C4.1 homework are NOT used (they would give the answer away); the negative
   association is an invented heather–bracken survey.
+
+## Which test? follows guide 8 (Daniel, 27 Nov 2026)
+Daniel's guide 8, *Which statistical test?* (`NLCS/Lab reports-IA-EE/8) Statistics Decision Tree - Biology IB.pdf`; every
+word is in `Sources/8) Statistics Decision Tree/build_tree.py`), the Write-Up Lab (its SPEC, *Which test? follows
+guide 8*) and this course say the same:
+- **Two groups of different individuals: Welch's t-test**, with no test of the spread first (R's `t.test()` default).
+  Student's t-test needs a similar spread; Welch's does not. Its df is not a whole number: reported to 1 d.p. The class:
+  t = 2.52, df = 37.8, p = 0.016; the stomata: t = 2.42, df = 18.5, p = 0.026 (equal n, so t is the same as Student's).
+- **Each normality check goes where the test looks:** each group on its own (stage 4's story and graph, stage 7's
+  `facet_wrap(~ trains)`, stage 11's step 6), the residuals of a line in one pile (stage 10's story step and
+  exercise), never all the raw data in one pile. The course has no paired test (its check: the differences).
+- **Three or more groups:** ANOVA or Kruskal–Wallis first, then Tukey's or Dunn's only if p < 0.05 (the shelf: blood
+  group, ANOVA p = 0.75, Kruskal–Wallis p = 0.72, so no test of the pairs). Never a t-test for every pair: with 5 groups
+  (10 pairs) the risk of at least one false "significant" result is **more than 25 %**, never "about 40 %". Inside the IB
+  guide: two groups chosen before the data are collected, or a correction (`pairwise.t.test(…, pool.sd = FALSE,
+  p.adjust.method = "bonferroni")`: a Welch's t-test for each pair).
+- **Labels as Tool 3 has them:** the t-test, χ², r and R² are the course; Mann–Whitney U, ANOVA, Tukey's, Kruskal–Wallis,
+  Dunn's, Spearman's rank and the Shapiro–Wilk test stay in extension boxes ("beyond the IB guide"), never a gate.
+- **The smallest n for a rank test to reach p < 0.05:** Mann–Whitney 4 per group (or 3 and 5), Spearman 5 points
+  (facts: exact p in R).
+- `tools/check.mjs` fails if any course's R code runs Student's t-test (`var.equal = TRUE`) or any course says "about
+  40 %" for every pair.
+- Until 27 Nov 2026 stage 7 checked the spread (larger SD less than twice the smaller) and stages 8 and 11 ran
+  Student's t-test. The tasks whose answer changed have new ids (`ib-each-group`, `ib-welch-default`, `ib-welch`,
+  `ib-resid`, `ib-final-check`, `ib-final-welch`): progress lives only in the pupil's browser, and a stage already
+  opened stays open (`P.open` in `js/course.js`).
 
 ## The p-value has ONE home: IB stage 6 (the coin)
 Its key step: "if the coin were fair, how often would chance alone give a result like yours?", p as "times in 100",
@@ -59,8 +86,10 @@ Year 8: the three steps. Never "unlikely to come from chance".
 - Overlapping 95 % CIs or error bars do **not** show "no significant difference"; only a test decides.
   Non-overlapping 95 % CIs → p < 0.05. (Seed-10 data: CIs overlap by 0.4 bpm, t-test p = 0.010.)
 - A normality test with p > 0.05 means "no evidence against normality", not "normal". Small groups
-  (≈ 15) give noisy Q–Q plots: a rough check. Check normality **in each group**, not in the merged data.
-- Welch's t-test is for **unequal spreads**, not for non-normal data (that is Mann–Whitney).
+  (≈ 15) give noisy Q–Q plots: a rough check. Check normality **in each group**, not in the merged data; for a line
+  (Pearson's r), check the **residuals** in one pile, never the y values.
+- Welch's t-test is the t-test for two groups, whatever their spreads (guide 8): the spread is never tested first.
+  It still needs each group roughly normal; a group far from normal → Mann–Whitney (beyond the IB guide).
 - Outliers are **checked, not deleted automatically** (IB guide: identify and justify removal or inclusion).
 - SD is the typical distance from the mean (a rough description); SE = SD ÷ √n describes the mean.
 - A bigger sample does not change α (5 %); it reduces false negatives.

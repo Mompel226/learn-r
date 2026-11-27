@@ -8,6 +8,11 @@
    formulae to memorise), C4.1.15 (χ² for association), C2.2.4 (r and R²),
    B3.2.4 (pulse rates), B3.1.10 (stomatal density). 95 % confidence
    intervals and the tests beyond the IB are extensions: never gates.
+   The tests follow Daniel's guide 8 (27 Nov 2026; SPEC.md, "Which test?
+   follows guide 8"): Welch's t-test for two groups, with no test of the
+   spread first; each normality check where the test looks (each group on
+   its own, the residuals of a line); ANOVA or Kruskal-Wallis, then Tukey's
+   or Dunn's only if p < 0.05.
 
    Stages (Daniel agreed the order, 25 Sep 2026):
      1 R in ten minutes            ← Part A
@@ -33,7 +38,7 @@
   var IB = LR.IB, SC = IB.scenes;
 
   /* ---------- stage 11's messy data: stomatal density from leaf casts (B3.1.10), INVENTED ----------
-     sun leaves 206.0 ± 25.7 (n = 11), shade 182.5 ± 19.3 (n = 11) once cleaned; t = 2.42, df = 20, p = 0.025.
+     sun leaves 206.0 ± 25.7 (n = 11), shade 182.5 ± 19.3 (n = 11) once cleaned; Welch's t-test t = 2.42, df = 18.5, p = 0.026.
      Three problems to find: six spellings of two labels, one missing count (leaf torn), one typing error (1980). */
   var LEAF = ['sun', 'Shade', 'sun', 'shade', 'SUN ', 'shade', 'Sun', 'shade', 'sun', ' shade', 'sun', 'Shade', 'sun', 'shade', 'Sun', 'shade', 'SUN ', 'Shade', 'sun', 'shade', 'Sun', ' shade', 'sun', 'shade'];
   var DENS = [198, 192, 204, 151, 1980, 173, 215, 184, 186, 'NA', 242, 159, 237, 202, 225, 169, 220, 201, 177, 188, 205, 175, 157, 214];
@@ -64,10 +69,14 @@
     ['sd(students$resting_hr[students$trains == "Yes"])', 8.40, 0.005],
     ['sd(students$resting_hr[students$trains == "No"]) / sqrt(20)', 1.73, 0.005],
     ['sd(students$resting_hr[students$trains == "No"]) / sqrt(80)', 0.87, 0.005],
-    ['t.test(resting_hr ~ trains, data = students, var.equal = TRUE)$statistic', 2.52, 0.005],
-    ['t.test(resting_hr ~ trains, data = students, var.equal = TRUE)$p.value', 0.016, 0.0005],
-    ['6.45 / t.test(resting_hr ~ trains, data = students, var.equal = TRUE)$statistic', 2.56, 0.005],
-    ['qt(0.975, 38)', 2.02, 0.005],
+    /* Welch's t-test: R's default, and guide 8's test for two groups (27 Nov 2026) */
+    ['t.test(resting_hr ~ trains, data = students)$statistic', 2.52, 0.005],
+    ['t.test(resting_hr ~ trains, data = students)$parameter', 37.8, 0.05],
+    ['t.test(resting_hr ~ trains, data = students)$p.value', 0.016, 0.0005],
+    ['t.test(resting_hr ~ trains, data = students)$conf.int', [1.27, 11.63], 0.005],
+    ['6.45 / t.test(resting_hr ~ trains, data = students)$statistic', 2.56, 0.005],
+    ['qt(0.975, t.test(resting_hr ~ trains, data = students)$parameter)', 2.02, 0.005],
+    ['2 * pt(-0.80, 37.6)', 0.43, 0.005],
     ['t.test(students$resting_hr[students$trains == "No"])$conf.int[1]', 73.37, 0.005],
     ['t.test(students$resting_hr[students$trains == "Yes"])$conf.int[2]', 74.48, 0.005],
     ['cor(students$exercise_h, students$resting_hr)', -0.504, 0.001],
@@ -86,12 +95,19 @@
     ['chisq.test(matrix(c(12, 48, 30, 10), 2), correct = FALSE)$statistic', 29.80, 0.01],
     ['chisq.test(matrix(c(12, 48, 30, 10), 2), correct = FALSE)$expected[1, 1]', 25.2, 0.001],
     ['chisq.test(c(315, 108, 101, 32), p = c(9, 3, 3, 1) / 16)$statistic', 0.47, 0.005],
-    ['max(tapply(students$resting_hr, students$trains, sd)) / min(tapply(students$resting_hr, students$trains, sd))', 1.08, 0.005],
     ['wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)$p.value', 0.014, 0.0005],
     ['summary(aov(resting_hr ~ abo, data = students))[[1]][["Pr(>F)"]][1]', 0.75, 0.005],
-    ['sum(!is.na(pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")$p.value))', 6, 0],
-    ['min(pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")$p.value, na.rm = TRUE)', 1, 0],
-    ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; t.test(density_mm2 ~ tolower(trimws(leaf)), data = s, var.equal = TRUE)$p.value', 0.025, 0.0005],
+    ['kruskal.test(resting_hr ~ abo, data = students)$p.value', 0.72, 0.005],
+    ['nrow(TukeyHSD(aov(resting_hr ~ abo, data = students))$abo)', 6, 0],
+    ['sum(!is.na(pairwise.t.test(students$resting_hr, students$abo, pool.sd = FALSE, p.adjust.method = "bonferroni")$p.value))', 6, 0],
+    /* the smallest n for a rank test to reach p < 0.05 (guide 8): exact p-values, no ties */
+    ['wilcox.test(1:4, 5:8)$p.value', 0.029, 0.001],
+    ['wilcox.test(1:3, 4:8)$p.value', 0.036, 0.001],
+    ['wilcox.test(1:3, 4:7)$p.value', 0.057, 0.001],
+    ['cor.test(1:5, 1:5, method = "spearman")$p.value', 0.017, 0.001],
+    ['cor.test(1:4, 1:4, method = "spearman")$p.value', 0.083, 0.001],
+    ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; t.test(density_mm2 ~ tolower(trimws(leaf)), data = s)$p.value', 0.026, 0.0005],
+    ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; t.test(density_mm2 ~ tolower(trimws(leaf)), data = s)$parameter', 18.5, 0.05],
     ['s <- stomata_raw[!is.na(stomata_raw$density_mm2) & stomata_raw$density_mm2 < 500, ]; as.numeric(tapply(s$density_mm2, tolower(trimws(s$leaf)), sd))', [19.3, 25.7], 0.05]
   ];
 
@@ -331,7 +347,8 @@
                 md: 'Two imagined groups with the same mean, 75 bpm. A small SD: the values are close to the mean. A large SD: the values are widely spread.',
                 analogy: 'Two boxes of mandarins, both with a mean mass of 80 g. In box A, every fruit is 75–85 g. In box B, they range from 50 to 110 g. Same mean, different spread.' },
               { title: 'Check each group on its own', hide: ['spread'], show: ['groups'],
-                md: 'Later you will compare the two groups with a t-test. It needs a roughly normal distribution __in each group__, so check each group on its own, never the two mixed together.' }
+                md: 'Later you will compare the two groups with a t-test. It needs a roughly normal distribution __in each group__, so check each group on its own, never the two mixed together.',
+                analogy: 'A doctor compares a child’s height with children of the same age, not with all children.' }
             ] },
           { type: 'exercise', id: 'ib-sd', gate: true, title: 'Your turn · SD of each group',
             task: 'Add two more columns inside `summarise( )`: the SD, `sd = sd(resting_hr)`, and the number of students, `n = n()`. Separate them with commas.',
@@ -533,41 +550,42 @@
               { title: 'Two measurements on each individual', show: ['b3'],
                 md: 'You measure two numbers for each individual: hours of exercise __and__ resting heart rate. Is one related to the other? Use a **correlation** (stage 10).' },
               { title: 'The t-test’s conditions', show: ['tcond'], focus: ['b2', 'tcond'],
-                md: 'The standard t-test needs each group to be roughly **normal** (stage 4), and the two groups to have a **similar spread** (similar SDs). If the SDs are very different, use **Welch’s t-test**. R’s `t.test()` does Welch’s unless you add `var.equal = TRUE`.' },
+                md: 'For two groups of different individuals, use **Welch’s t-test**. It needs each group to be roughly **normal**: check __each group on its own__ (stage 4), never all the values in one pile. It does __not__ need the two groups to have a similar spread, so you do not check the spreads first. R’s `t.test()` does Welch’s t-test. (**Student’s t-test**, the older version, needs a similar spread.)' },
               { title: 'The χ² test’s condition', show: ['ccond'], focus: ['b1', 'ccond'],
                 md: 'Every **expected** count must be at least 5. And use counts, never percentages.' },
               { title: 'Beyond the IB', show: ['shelf'],
-                md: 'Data far from normal? Three or more groups? There are tests for these too. They are not in the IB guide, so they are on the shelf below, for when you need them.' }
+                md: 'Data far from normal? Three or more groups? There are tests for these too. They are not in the IB guide, so they are on the shelf below, for when you need them.\n\nWith three or more groups, never use a t-test for every pair: the shelf says why.' }
             ] },
           { type: 'filltable', id: 'ib-choose', gate: true, title: 'Choose the test', rowLabel: 'The question',
             key: 'data.frame(label = c("Is the mass of snails different on the two sides of a wall?", "Are two plant species found in the same quadrats more often than chance predicts?", "Does leaf length increase with the light intensity where each leaf grew?", "Is stomatal density different in sun leaves and shade leaves?", "Does the number of daisies per quadrat fall as the distance from a path rises?", "Is the ratio of purple to white flowers different from 3 : 1?"), test = c("t-test", "χ² test", "correlation", "t-test", "correlation", "χ² test"))',
             fields: [{ key: 'test', label: 'Test', options: ['χ² test', 't-test', 'correlation'] }],
             pass: 'Counts in categories: χ². A measurement in two groups: t-test. Two measurements on each individual: correlation.',
             tip: 'Ask: categories, two groups, or two measurements on each individual?' },
-          { type: 'exercise', id: 'ib-sd-ratio', gate: true, title: 'Your turn · similar spread?',
-            task: 'A rule of thumb: if the larger SD is less than __twice__ the smaller, the spreads are similar enough for the standard t-test. Add a last line that divides the larger SD by the smaller: `max(sds) / min(sds)`.',
-            code: '# The SD of each group\nsds <- tapply(students$resting_hr, students$trains, sd)\nsds\n',
-            solution: 'sds <- tapply(students$resting_hr, students$trains, sd)\nsds\nmax(sds) / min(sds)',
-            check: 'r <- max(tapply(students$resting_hr, students$trains, sd)) / min(tapply(students$resting_hr, students$trains, sd)); if (is.null(value) || length(value) != 1) "Add a last line: max(sds) / min(sds)" else if (abs(as.numeric(value) - r) > 0.001) "Divide the larger SD by the smaller: max(sds) / min(sds)" else TRUE',
-            pass: '1.08: far below 2. The spreads are similar, so the standard t-test fits.' },
-          { type: 'mcq', id: 'ib-welch-mcq', gate: true, q: 'Two groups of heart rates are roughly normal. Their SDs are 3 bpm and 10 bpm. Which test?',
+          { type: 'exercise', id: 'ib-each-group', gate: true, title: 'Your turn · check each group on its own',
+            task: 'The t-test needs each group to be roughly normal. Run the code: R draws all 40 heart rates in one histogram, which mixes the two groups. Then add ` +` at the end of the last line, and a new line: `facet_wrap(~ trains)`. R draws one histogram for each group.',
+            code: 'ggplot(students, aes(x = resting_hr)) +\n  geom_histogram(binwidth = 6, boundary = 54, fill = "#9DB9DC", colour = "white") +\n  labs(x = "Resting heart rate / bpm", y = "Number of students")',
+            solution: 'ggplot(students, aes(x = resting_hr)) +\n  geom_histogram(binwidth = 6, boundary = 54, fill = "#9DB9DC", colour = "white") +\n  labs(x = "Resting heart rate / bpm", y = "Number of students") +\n  facet_wrap(~ trains)',
+            check: 'if (!inherits(value, "ggplot")) (if (has("facet_wrap(")) "Put + at the end of the labs( ) line, so that facet_wrap( ) joins the graph." else "Keep the graph as the last thing in your code.") else if (!inherits(value$facet, "FacetWrap") && !inherits(value$facet, "FacetGrid")) "Add + at the end of the labs( ) line, then a new line: facet_wrap(~ trains)." else if (!has("~trains") && !has("vars(trains)")) "Split the graph by group: facet_wrap(~ trains)." else TRUE',
+            hint: 'The last two lines: `labs(x = "Resting heart rate / bpm", y = "Number of students") +` and `facet_wrap(~ trains)`',
+            pass: 'One histogram for each group, and each is roughly a bell shape, so the t-test can be used. The t-test compares each value with the mean of its own group: that is why you check each group on its own.' },
+          { type: 'mcq', id: 'ib-welch-default', gate: true, q: 'Heart rates of two groups of different students. Each group is roughly normal, with SDs of 8 bpm and 9 bpm. What do you do?',
             opts: [
-              { t: 'Welch’s t-test', ok: true, why: '10 is more than twice 3: the spreads differ. Welch’s t-test does not need equal spread.' },
-              { t: 'The standard t-test', why: 'It needs similar spreads, and 10 bpm is more than three times 3 bpm.' },
-              { t: 'The χ² test', why: 'χ² is for counts in categories. Heart rate is a measurement.' },
-              { t: 'A correlation', why: 'A correlation needs two measurements on each individual, not one measurement in two groups.' }
+              { t: 'Run Welch’s t-test. There is no need to check the spreads first.', ok: true, why: 'Welch’s t-test does not need a similar spread, so you do not test the spreads. The check it needs, each group roughly normal, is done.' },
+              { t: 'Check that the spreads are similar, then run Student’s t-test.', why: 'Student’s t-test needs a similar spread; Welch’s t-test does not. So Welch’s t-test is the safer choice for two groups, with no check of the spreads.' },
+              { t: 'Check all the values in one pile for a bell shape, then run a t-test.', why: 'Check each group on its own, never all the values in one pile: the t-test compares each value with the mean of its own group.' },
+              { t: 'Run the χ² test, because the students are in two categories.', why: 'χ² is for counts in categories. Heart rate is a measurement in two groups, so a t-test fits.' }
             ] },
           { type: 'extension', title: 'The shelf: tests beyond the IB',
-            md: 'You will not need these for the IB exams. You may need them for an IA or an Extended Essay:\n\n- **Mann–Whitney U test**: like the t-test, but for data far from normal. `wilcox.test(resting_hr ~ trains, data = students)`\n- **ANOVA**: three or more groups. `summary(aov(resting_hr ~ abo, data = students))`\n- **A correction for multiple comparisons**: for t-tests between several pairs. Every extra test is another chance of a false “significant” result. `pairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")` R multiplies each p by the number of tests (at most 1), so you still compare it with 0.05.\n- **Spearman’s rank correlation**: for a relationship that is not a straight line. `cor.test(students$exercise_h, students$resting_hr, method = "spearman")`',
+            md: 'You will not need these for the IB exams. You may need them for an IA or an Extended Essay:\n\n- **Mann–Whitney U test**: two groups, when a group is far from a bell shape. It uses the order (rank) of the values, so it needs no bell shape. To reach p < 0.05, it needs at least 4 values in each group (or 3 and 5). `wilcox.test(resting_hr ~ trains, data = students)`\n- **ANOVA**: three or more groups, in one test. It shows only whether at least one group is different. Only if p < 0.05, **Tukey’s test** shows which pairs differ: `TukeyHSD(aov(resting_hr ~ abo, data = students))`. A group far from a bell shape: the **Kruskal–Wallis test**, `kruskal.test(resting_hr ~ abo, data = students)`, then **Dunn’s test**, only if p < 0.05.\n- **Never a t-test for every pair.** With 5 groups (10 pairs), the risk of at least one false “significant” result is more than 25 %, not 5 %. To stay inside the IB guide, choose the two groups that matter before you collect the data, and use Welch’s t-test. To test several pairs, use a **correction for multiple comparisons**: `pairwise.t.test(students$resting_hr, students$abo, pool.sd = FALSE, p.adjust.method = "bonferroni")` runs a Welch’s t-test for each pair and multiplies each p by the number of tests (at most 1), so you still compare it with 0.05.\n- **Spearman’s rank correlation**: for a relationship that only rises or only falls, but not along a straight line, or when the residuals are far from a bell shape. To reach p < 0.05, it needs at least 5 points. `cor.test(students$exercise_h, students$resting_hr, method = "spearman")`',
             blocks: [
-              { type: 'example', title: 'Try them in any exercise box', code: 'wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)\nsummary(aov(resting_hr ~ abo, data = students))\npairwise.t.test(students$resting_hr, students$abo, p.adjust.method = "bonferroni")',
-                md: 'Mann–Whitney: p = 0.014, the same decision as the t-test. ANOVA by blood group: p = 0.75. The 6 pairs of blood groups, corrected: every p = 1, so no pair differs. There is no evidence that blood group is linked to resting heart rate, which is what biology expects.' }
+              { type: 'example', title: 'Try them in any exercise box', code: 'wilcox.test(resting_hr ~ trains, data = students, exact = FALSE)\nsummary(aov(resting_hr ~ abo, data = students))\nkruskal.test(resting_hr ~ abo, data = students)',
+                md: 'Mann–Whitney: p = 0.014, the same decision as Welch’s t-test. ANOVA by blood group: p = 0.75; Kruskal–Wallis: p = 0.72. Both are more than 0.05, so you stop there: no Tukey’s or Dunn’s test, because no group is shown to differ. There is no evidence that blood group is linked to resting heart rate, which is what biology expects.' }
             ] },
           { type: 'note', title: 'The Write-Up Lab chooses with you',
             md: 'The Write-Up Lab’s **Find your test** asks you a few questions about your own investigation, then names the test. [Open Statistical tests in the Write-Up Lab](https://nlcsbiology.com/write-up-lab/#/part/stats).' },
           { type: 'frames', items: [
             'The data are ___ in ___ groups, so a ___ was used.',
-            'The larger SD (___) is less than twice the smaller (___), so the spreads are similar and the standard t-test was used.'
+            'Each group was roughly normal when checked on its own, so ___ t-test was used: it does not need a similar spread.'
           ] }
         ] },
 
@@ -589,33 +607,33 @@
               { title: 'The noise', show: ['sd'], focus: ['sd', 'dotsNo', 'dotsYes', 'means'],
                 md: 'The dots spread widely: SD 7.75 and 8.40 bpm. With so much spread, two samples could differ by chance.\n\nThe **SE of the difference** measures that noise. It combines both SDs and both group sizes: here __2.56 bpm__.' },
               { title: 'Signal ÷ noise = t', show: ['tcalc'],
-                md: '**t** is one number: the difference divided by the size of difference that chance alone typically makes (the SE of the difference). t = 6.45 ÷ 2.56 = __2.52__: the difference is 2.5 times bigger than chance typically makes. The bigger t is, the more rarely chance alone would give it.\n\nThe name comes from “Student”, the pen name of William Gosset, a scientist at the Guinness brewery in Dublin, who published the test in 1908.',
+                md: '**t** is one number: the difference divided by the size of difference that chance alone typically makes (the SE of the difference). t = 6.45 ÷ 2.56 = __2.52__: the difference is 2.5 times bigger than chance typically makes. The bigger t is, the more rarely chance alone would give it.\n\nThe name comes from “Student”, the pen name of William Gosset, a scientist at the Guinness brewery in Dublin, who published the test in 1908. R runs **Welch’s t-test**, Bernard Welch’s version (1947): it does not need the two groups to have a similar spread.',
                 analogy: 'Hearing a friend in the canteen. A loud voice (a big difference) in a quiet room (little spread, many students) is easy to hear. A whisper in a noisy room is not.' },
               { title: 'How big is big enough?', hide: ['axis', 'labels', 'dotsNo', 'dotsYes', 'means', 'diff', 'sd', 'h0', 'tcalc'], show: ['tdist', 'tcrit'],
-                md: 'If H₀ were true, t would usually be close to 0. With 38 **degrees of freedom** (df = 40 students − 2 groups), t lands beyond ± 2.02 less than 5 % of the time. 2.02 is the **critical value**.\n\nBoth red ends count, because a difference could go either way: training could have lowered heart rate, or raised it. That makes the test **two-tailed**. It is the normal t-test.' },
+                md: 'If H₀ were true, t would usually be close to 0. With 37.8 **degrees of freedom (df)**, t lands beyond ± 2.02 less than 5 % of the time. 2.02 is the **critical value**. Welch’s t-test calculates df from both SDs and both group sizes; here 37.8 is close to 40 students − 2 groups = 38, because the groups are the same size and their SDs are similar.\n\nBoth red ends count, because a difference could go either way: training could have lowered heart rate, or raised it. That makes the test **two-tailed**. It is the normal t-test.' },
               { title: 'The decision', show: ['tmark'],
                 md: 't = 2.52 is beyond 2.02, so p < 0.05. R gives __p = 0.016__: 16 times in 1,000. Reject H₀. The difference is **statistically significant**. ([What p means](https://nlcsbiology.com/learn-r/ib.html#p-value).)' },
               { title: 'What it does not show', show: ['concl'], focus: ['concl', 'tmark'],
                 md: 'The students chose their own groups, so the test does not show that training __caused__ the lower heart rate. Students with a naturally low heart rate might be more likely to join a team. An experiment that assigns students to groups could test the cause.',
                 analogy: 'Umbrellas and wet streets go together. Umbrellas do not make streets wet: rain causes both.' }
             ] },
-          { type: 'exercise', id: 'ib-ttest', gate: true, title: 'Your turn · the t-test in R',
-            task: '`resting_hr ~ trains` means *resting heart rate, by group*. Run the code. R does Welch’s t-test unless you tell it the spreads are similar. They are (stage 7), so add `, var.equal = TRUE` before the last bracket, and run it again.',
-            code: 't.test(resting_hr ~ trains, data = students)',
-            solution: 't.test(resting_hr ~ trains, data = students, var.equal = TRUE)',
-            check: 'if (!inherits(value, "htest")) "Keep t.test( ) as the last line." else if (grepl("Welch", value$method)) "Add var.equal = TRUE inside the brackets: the spreads are similar." else if (abs(abs(value$statistic) - 2.5233) > 0.001) "Use resting_hr ~ trains and data = students." else TRUE',
-            hint: '`t.test(resting_hr ~ trains, data = students, var.equal = TRUE)`',
-            pass: '“Two Sample t-test”: t = 2.52, df = 38, p = 0.016.' },
+          { type: 'exercise', id: 'ib-welch', gate: true, title: 'Your turn · the t-test in R',
+            task: 'Run the code: R gives the mean of each group. Then write the t-test on the empty line: `t.test(resting_hr ~ trains, data = students)`. `resting_hr ~ trains` means *resting heart rate, by group*. R runs **Welch’s t-test**, the t-test that does not need a similar spread.',
+            code: '# The mean of each group\ntapply(students$resting_hr, students$trains, mean)\n# The t-test:\n',
+            solution: 'tapply(students$resting_hr, students$trains, mean)\nt.test(resting_hr ~ trains, data = students)',
+            check: 'if (!inherits(value, "htest")) "Write the t.test( ) line on the empty line at the end." else if (!grepl("Welch", value$method)) "Remove var.equal = TRUE: it makes Student’s t-test, which needs a similar spread. R’s default, Welch’s t-test, does not." else if (abs(abs(value$statistic) - 2.5233) > 0.001) "Use resting_hr ~ trains and data = students." else TRUE',
+            hint: '`t.test(resting_hr ~ trains, data = students)`',
+            pass: '“Welch Two Sample t-test”: t = 2.52, df = 37.8, p = 0.016.' },
           { type: 'interpret', title: 'Reading R’s answer',
-            md: '- `alternative hypothesis: true difference in means … is not equal to 0`: “not equal” means a difference in either direction counts. The test is **two-tailed**, as in the story: the usual kind of t-test.\n- `t = 2.5233, df = 38, p-value = 0.01593`: the test result. Report t to 2 d.p. and p to 2 significant figures: t = 2.52, df = 38, p = 0.016.\n- `mean in group No 77.00, mean in group Yes 70.55`: the two means.\n- `95 percent confidence interval: 1.28 11.62`: the true difference is probably between 1.3 and 11.6 bpm. It does not include 0, which agrees with p < 0.05.' },
+            md: '- `Welch Two Sample t-test`: R ran Welch’s t-test, its default. It does not need the two groups to have a similar spread.\n- `alternative hypothesis: true difference in means … is not equal to 0`: “not equal” means a difference in either direction counts. The test is **two-tailed**, as in the story: the usual kind of t-test.\n- `t = 2.5233, df = 37.758, p-value = 0.01596`: the test result. Welch’s df is not a whole number: R calculates it from both SDs and both group sizes. Report t to 2 d.p., df to 1 d.p. and p to 2 significant figures: t = 2.52, df = 37.8, p = 0.016.\n- `mean in group No 77.00, mean in group Yes 70.55`: the two means.\n- `95 percent confidence interval: 1.27 11.63`: the true difference is probably between 1.3 and 11.6 bpm. It does not include 0, which agrees with p < 0.05.' },
           { type: 'rquiz', id: 'ib-t-report', gate: true, title: 'Complete the report',
             md: 'Choose each number from R’s output.',
-            key: 'tt <- t.test(resting_hr ~ trains, data = students, var.equal = TRUE); list(t = sprintf("%.2f", tt$statistic), df = as.character(tt$parameter), p = sprintf("%.3f", tt$p.value), dec = "rejected")',
-            choices: 'c("2.52", "6.45", "38", "40", "0.016", "0.05", "rejected", "not rejected")',
+            key: 'tt <- t.test(resting_hr ~ trains, data = students); list(t = sprintf("%.2f", tt$statistic), df = sprintf("%.1f", tt$parameter), p = sprintf("%.3f", tt$p.value), dec = "rejected")',
+            choices: 'c("2.52", "6.45", "37.8", "40", "0.016", "0.05", "rejected", "not rejected")',
             fields: [{ id: 't', label: 't =' }, { id: 'df', label: 'df =' }, { id: 'p', label: 'p =' }, { id: 'dec', label: 'H₀ is' }],
-            pass: 'Students who train had a significantly lower mean resting heart rate (70.55 bpm) than students who do not (77.00 bpm): t = 2.52, df = 38, p = 0.016.',
+            pass: 'Students who train had a significantly lower mean resting heart rate (70.55 bpm) than students who do not (77.00 bpm) (Welch’s t-test: t = 2.52, df = 37.8, p = 0.016).',
             tip: 'Look at the line that starts with t =.' },
-          { type: 'mcq', id: 'ib-t-mcq', gate: true, q: 'Another class: t = 0.80, df = 38, p = 0.43. What do you write?',
+          { type: 'mcq', id: 'ib-t-mcq', gate: true, q: 'Another class: Welch’s t-test gives t = 0.80, df = 37.6, p = 0.43. What do you write?',
             opts: [
               { t: 'There is no significant difference between the means: p > 0.05, so H₀ is not rejected.', ok: true, why: 'If there were no real difference, chance alone would give a difference this big 43 times in 100: not rare enough to reject H₀.' },
               { t: 'The means of the two groups are the same: t is close to 0, so H₀ is proved true.', why: 'The test cannot show that. It only finds no evidence of a difference, and no test proves H₀ true.' },
@@ -623,7 +641,7 @@
               { t: 'Training has no effect on heart rate: the test found no significant difference.', why: 'Too strong: one sample, no significant difference found. That is not proof that training has no effect.' }
             ] },
           { type: 'frames', items: [
-            'The mean resting heart rate of students who train (___ bpm) was significantly lower than that of students who do not (___ bpm): t = ___, df = ___, p = ___.',
+            'The mean resting heart rate of students who train (___ bpm) was significantly lower than that of students who do not (___ bpm) (Welch’s t-test: t = ___, df = ___, p = ___).',
             'p is less than 0.05, so the null hypothesis is rejected.',
             'The groups were not assigned at random, so the test does not show that ___ causes ___.'
           ] }
@@ -703,7 +721,7 @@
       { id: 'cor', title: 'Correlation and R²',
         lede: 'Two measurements on each student: hours of exercise and resting heart rate. Do they go together?',
         blocks: [
-          { type: 'goal', md: 'Describe a correlation, find r and R² in R, and explain what R² means.' },
+          { type: 'goal', md: 'Describe a correlation, find r and R² in R, check the residuals, and explain what R² means.' },
           { type: 'story', id: 'ib-cor', gate: true, title: 'Exercise and heart rate', w: 640, h: 352, alt: 'A scatter graph of hours of exercise against resting heart rate, with a line of best fit, r and R²',
             scene: SC.cor,
             steps: [
@@ -712,24 +730,21 @@
               { title: 'The pattern', show: ['trend'],
                 md: 'As exercise increases, resting heart rate tends to fall. That is a **negative correlation**. If both rose together, it would be a positive correlation.' },
               { title: 'How strong? r', show: ['rscale'], pan: 'rscale',
-                md: 'The **correlation coefficient (r)** goes from −1 to +1. At −1 or +1, every point sits on a straight line. At 0, there is no straight-line pattern. Here __r = −0.50__: a moderate negative correlation.' },
+                md: 'The **correlation coefficient (r)**, also called Pearson’s r, goes from −1 to +1. At −1 or +1, every point sits on a straight line. At 0, there is no straight-line pattern. Here __r = −0.50__: a moderate negative correlation.' },
               { title: 'The line of best fit', show: ['line'],
                 md: 'R finds the straight line closest to all the points: heart rate = 79.5 − 1.37 × hours. Each extra hour of exercise goes with a heart rate about 1.4 bpm lower.' },
               { title: 'R²: how much does it explain?', show: ['r2'], pan: 'r2',
                 md: '**R²** (the coefficient of determination) is __0.25__: 25 % of the variation in resting heart rate is explained by hours of exercise. The other 75 % comes from other things: genes, sleep, stress, how the pulse was taken.',
                 analogy: 'Put all the reasons why heart rates differ into one pie. Exercise is a quarter of the pie.' },
+              { title: 'Check first: the residuals', hide: ['trend'], show: ['resid'], focus: ['resid', 'line', 'pts', 'axes'],
+                md: 'The next step is a p-value for r. That p-value is right only when the **residuals** pass a check. A residual is the distance of a point above (+) or below (−) the line. All 40 residuals, in one pile, should form a rough bell shape, with an even spread along the line. Here they do.\n\nNever check the heart rates themselves in one pile: along the line, the heart rate falls as the hours of exercise rise. So each student is compared with the line at their own hours of exercise.',
+                analogy: 'A growth chart compares a child’s height with the line for children of the same age, not with all children.' },
               { title: 'Could it be chance?', show: ['sig'], pan: 'sig',
                 md: '**H₀**: there is no correlation. `cor.test()` gives __p = 0.0009__: 9 times in 10,000. Less than 0.05, so reject H₀. The correlation is statistically significant. ([What p means](https://nlcsbiology.com/learn-r/ib.html#p-value).)' },
               { title: 'Correlation is not cause', show: ['cause'], focus: ['cause', 'line'],
                 md: 'Students who exercise more may also sleep, eat or rest differently. A correlation cannot show which causes which.',
                 analogy: 'Ice-cream sales and sunburn rise together. Ice cream does not cause sunburn: summer sun causes both.' }
             ] },
-          { type: 'exercise', id: 'ib-cor-test', gate: true, title: 'Your turn · r and its p-value',
-            task: '`cor()` gives r. Run it. Then change `cor` to `cor.test` to get the p-value too.',
-            code: 'cor(students$exercise_h, students$resting_hr)',
-            solution: 'cor.test(students$exercise_h, students$resting_hr)',
-            check: 'if (!inherits(value, "htest")) "Change cor( ) to cor.test( )." else if (abs(value$estimate + 0.504) > 0.001) "Keep the two columns: students$exercise_h and students$resting_hr." else TRUE',
-            pass: 'r = −0.50, p = 0.00091: a significant negative correlation.' },
           { type: 'exercise', id: 'ib-scatter', gate: true, title: 'Your turn · the line of best fit',
             task: 'Run the code: R draws the scatter graph. Add a line of best fit: ` +` at the end of the last line, then `geom_smooth(method = "lm", formula = y ~ x, se = FALSE)`. (`lm` means linear model: a straight line of y against x.)',
             code: 'ggplot(students, aes(x = exercise_h, y = resting_hr)) +\n  geom_point(size = 2.5) +\n  labs(x = "Exercise / hours per week", y = "Resting heart rate / bpm")',
@@ -742,6 +757,19 @@
             solution: 'model <- lm(resting_hr ~ exercise_h, data = students)\ncoef(model)\nsummary(model)$r.squared',
             check: 'if (is.null(value) || length(value) != 1) "Add a last line: summary(model)$r.squared" else if (abs(as.numeric(value) - 0.254) > 0.001) "Use summary(model)$r.squared." else TRUE',
             pass: 'R² = 0.25. And r² = (−0.504)² = 0.254: for a straight line, R² is r squared.' },
+          { type: 'exercise', id: 'ib-resid', gate: true, title: 'Your turn · check the residuals',
+            task: 'Check the residuals before the p-value of r. `resid(model)` gives each student’s residual: their heart rate minus the line. Run the code: it draws the heart rates in one pile, which is the wrong check for a line. In `aes( )`, change `x = heart_rate` to `x = residual`, and run it again.',
+            code: 'model <- lm(resting_hr ~ exercise_h, data = students)\nd <- data.frame(heart_rate = students$resting_hr, residual = resid(model))\n\nggplot(d, aes(x = heart_rate)) +\n  geom_histogram(binwidth = 6, fill = "#9FD8C8", colour = "white") +\n  labs(y = "Number of students")',
+            solution: 'model <- lm(resting_hr ~ exercise_h, data = students)\nd <- data.frame(heart_rate = students$resting_hr, residual = resid(model))\n\nggplot(d, aes(x = residual)) +\n  geom_histogram(binwidth = 6, fill = "#9FD8C8", colour = "white") +\n  labs(y = "Number of students")',
+            check: 'if (!inherits(value, "ggplot")) "Keep the graph as the last thing in your code." else if (!has("x=residual")) "Change x = heart_rate to x = residual inside aes( )." else TRUE',
+            hint: '`ggplot(d, aes(x = residual)) +`',
+            pass: 'The residuals form one rough bell shape around 0, and on the scatter graph the points spread roughly evenly along the line: Pearson’s r and its p-value can be used. Far from a bell? Use Spearman’s rank correlation (beyond the IB guide).' },
+          { type: 'exercise', id: 'ib-cor-test', gate: true, title: 'Your turn · r and its p-value',
+            task: 'The residuals passed their check, so the p-value of r can be used. `cor()` gives r. Run it. Then change `cor` to `cor.test` to get the p-value too.',
+            code: 'cor(students$exercise_h, students$resting_hr)',
+            solution: 'cor.test(students$exercise_h, students$resting_hr)',
+            check: 'if (!inherits(value, "htest")) "Change cor( ) to cor.test( )." else if (abs(value$estimate + 0.504) > 0.001) "Keep the two columns: students$exercise_h and students$resting_hr." else TRUE',
+            pass: 'r = −0.50, p = 0.00091: a significant negative correlation.' },
           { type: 'mcq', id: 'ib-r2-mcq', gate: true, q: 'Axon diameter and nerve conduction speed: R² = 0.81. What does it mean?',
             opts: [
               { t: '81 % of the variation in speed is explained by the variation in axon diameter.', ok: true, why: 'R² is the share of the variation in y that the line through x explains.' },
@@ -753,6 +781,7 @@
             md: 'C2.2.4 uses nerve impulses: conduction speed is positively correlated with axon diameter, and negatively correlated with animal size. You should describe positive and negative correlations, use r for their strength, and use R² for how much of the variation the line explains.' },
           { type: 'frames', items: [
             'There is a ___ correlation between ___ and ___ (r = ___, p = ___).',
+            'The residuals, checked in one pile, formed a rough ___ shape, so ___ was used.',
             'R² = ___, so ___ % of the variation in ___ is explained by ___.',
             'A correlation does not show that ___ causes ___.'
           ] }
@@ -760,7 +789,7 @@
 
       /* ================= 11 · Put it together (Part G) ================= */
       { id: 'together', title: 'Put it together',
-        lede: 'A new data set, straight from a class spreadsheet, with mistakes in it. Clean it, describe it, test it and report it: every step of the course, in order.',
+        lede: 'A new data set, straight from a class spreadsheet, with mistakes in it. Clean it, describe it, check it, test it and report it: every step of the course, in order.',
         blocks: [
           { type: 'goal', md: 'Take raw data from a practical all the way to a reported test.' },
           { type: 'concept', title: 'The practical: stomatal density (B3.1.10)',
@@ -792,31 +821,39 @@
             code: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\n\nstomata %>%\n  group_by(leaf) %>%\n  summarise(mean = mean(density_mm2))',
             solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\n\nstomata %>%\n  group_by(leaf) %>%\n  summarise(mean = mean(density_mm2), sd = sd(density_mm2), n = n())',
             check: 'v <- tryCatch(as.data.frame(value), error = function(e) NULL); if (is.null(v) || !("mean" %in% names(v))) "Keep the summarise( ) with mean." else if (!all(c("sd", "n") %in% names(v))) "Add sd = sd(density_mm2) and n = n() inside summarise( )." else if (!isTRUE(all.equal(as.numeric(v$n), c(11, 11))) || abs(v$mean[v$leaf == "sun"] - 206) > 0.01) "Clean the data first (steps 2 and 3), then summarise." else TRUE',
-            pass: 'Sun: 206.0 ± 25.7 stomata per mm² (n = 11). Shade: 182.5 ± 19.3 (n = 11). The larger SD is less than twice the smaller: similar spreads.' },
+            pass: 'Sun: 206.0 ± 25.7 stomata per mm² (n = 11). Shade: 182.5 ± 19.3 (n = 11).' },
           { type: 'exercise', id: 'ib-graph', gate: true, title: 'Step 5 · The graph',
             task: 'A dot plot of the two means with ± 1 SD error bars. Fill in the two empty labels: the x-axis is the leaf position; the y-axis is the mean stomatal density, with its unit: `/ mm⁻²`.',
             code: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\ns <- stomata %>% group_by(leaf) %>%\n  summarise(mean = mean(density_mm2), sd = sd(density_mm2))\n\nggplot(s, aes(x = leaf, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.15) +\n  labs(x = "", y = "")',
             solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\ns <- stomata %>% group_by(leaf) %>%\n  summarise(mean = mean(density_mm2), sd = sd(density_mm2))\n\nggplot(s, aes(x = leaf, y = mean)) +\n  geom_point(size = 3) +\n  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd), width = 0.15) +\n  labs(x = "Leaf position", y = "Mean stomatal density / mm⁻²")',
             check: 'if (has("x=\\"\\"") || has("y=\\"\\"")) "Fill in both labels, between the quote marks." else if (!grepl("y *= *\\"[^\\"]*mm", code_nc)) "Give the y-axis its unit: / mm⁻² (or / stomata per mm²)." else TRUE',
             pass: 'Caption it: “Figure 1. Dot plot showing the effect of leaf position (sun or shade) on the mean stomatal density (n = 11; error bars = ± 1 SD).”' },
-          { type: 'exercise', id: 'ib-final-test', gate: true, title: 'Step 6 · The test',
-            task: 'One measurement, two groups, similar spreads, each group roughly normal: the standard t-test. Write it on the empty line: `t.test(density_mm2 ~ leaf, data = stomata, var.equal = TRUE)`.',
+          { type: 'exercise', id: 'ib-final-check', gate: true, title: 'Step 6 · Check each group on its own',
+            task: 'Welch’s t-test needs each group to be roughly normal. Run the code: R draws all 22 leaves in one histogram, which mixes the two groups. Then add ` +` at the end of the last line, and a new line: `facet_wrap(~ leaf)`.',
+            code: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\n\nggplot(stomata, aes(x = density_mm2)) +\n  geom_histogram(binwidth = 20, boundary = 150, fill = "#9FD8B5", colour = "white") +\n  labs(x = "Stomatal density / mm⁻²", y = "Number of leaves")',
+            solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\n\nggplot(stomata, aes(x = density_mm2)) +\n  geom_histogram(binwidth = 20, boundary = 150, fill = "#9FD8B5", colour = "white") +\n  labs(x = "Stomatal density / mm⁻²", y = "Number of leaves") +\n  facet_wrap(~ leaf)',
+            check: 'if (!inherits(value, "ggplot")) (if (has("facet_wrap(")) "Put + at the end of the labs( ) line, so that facet_wrap( ) joins the graph." else "Keep the graph as the last thing in your code.") else if (!inherits(value$facet, "FacetWrap") && !inherits(value$facet, "FacetGrid")) "Add + at the end of the labs( ) line, then a new line: facet_wrap(~ leaf)." else if (!has("~leaf") && !has("vars(leaf)")) "Split the graph by leaf position: facet_wrap(~ leaf)." else TRUE',
+            hint: 'Put ` +` at the end of the labs( ) line, then a last line: `facet_wrap(~ leaf)`',
+            pass: 'One histogram for each group. With 11 leaves in a group a histogram is lumpy, so this is only a rough check: neither group is far from a bell shape (no long tail, no second peak), so Welch’s t-test can be used. (A group far from a bell shape: the Mann–Whitney U test, beyond the IB guide.)' },
+          { type: 'exercise', id: 'ib-final-welch', gate: true, title: 'Step 7 · The test',
+            task: 'One measurement, two groups of different leaves, each group roughly normal: Welch’s t-test. Write it on the empty line: `t.test(density_mm2 ~ leaf, data = stomata)`.',
             code: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\n\n# the t-test:\n',
-            solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\nt.test(density_mm2 ~ leaf, data = stomata, var.equal = TRUE)',
-            check: 'if (!inherits(value, "htest")) "Add the t.test( ) line at the end." else if (grepl("Welch", value$method)) "Add var.equal = TRUE: the spreads are similar." else if (abs(abs(value$statistic) - 2.4219) > 0.001) "Use density_mm2 ~ leaf and the cleaned data, data = stomata." else TRUE',
-            pass: 't = −2.42, df = 20, p = 0.025. (t is negative only because R takes shade − sun: shade comes first in the alphabet.)' },
-          { type: 'rquiz', id: 'ib-final-report', gate: true, title: 'Step 7 · The report',
-            key: 's <- stomata_raw; s$leaf <- tolower(trimws(s$leaf)); s <- s[!is.na(s$density_mm2) & s$density_mm2 < 500, ]; tt <- t.test(density_mm2 ~ leaf, data = s, var.equal = TRUE); list(t = sprintf("%.2f", abs(tt$statistic)), df = as.character(tt$parameter), p = sprintf("%.3f", tt$p.value), dec = "rejected", hi = "sun")',
-            choices: 'c("2.42", "23.5", "20", "22", "0.025", "0.05", "rejected", "not rejected", "sun", "shade")',
+            solution: 'stomata <- stomata_raw\nstomata$leaf <- tolower(trimws(stomata$leaf))\nstomata <- stomata %>% filter(!is.na(density_mm2), density_mm2 < 500)\nt.test(density_mm2 ~ leaf, data = stomata)',
+            check: 'if (!inherits(value, "htest")) "Add the t.test( ) line at the end." else if (!grepl("Welch", value$method)) "Remove var.equal = TRUE: Welch’s t-test does not need a similar spread." else if (abs(abs(value$statistic) - 2.4219) > 0.001) "Use density_mm2 ~ leaf and the cleaned data, data = stomata." else TRUE',
+            pass: 't = −2.42, df = 18.5, p = 0.026. (t is negative only because R takes shade − sun: shade comes first in the alphabet.)' },
+          { type: 'rquiz', id: 'ib-final-report', gate: true, title: 'Step 8 · The report',
+            key: 's <- stomata_raw; s$leaf <- tolower(trimws(s$leaf)); s <- s[!is.na(s$density_mm2) & s$density_mm2 < 500, ]; tt <- t.test(density_mm2 ~ leaf, data = s); list(t = sprintf("%.2f", abs(tt$statistic)), df = sprintf("%.1f", tt$parameter), p = sprintf("%.3f", tt$p.value), dec = "rejected", hi = "sun")',
+            choices: 'c("2.42", "23.5", "18.5", "20", "22", "0.026", "0.05", "rejected", "not rejected", "sun", "shade")',
             fields: [{ id: 'hi', label: 'Higher mean density:' }, { id: 't', label: 't =' }, { id: 'df', label: 'df =' }, { id: 'p', label: 'p =' }, { id: 'dec', label: 'H₀ is' }],
             pass: 'Every step, from raw data to a reported test.',
-            tip: 'Use the output of steps 4 and 6.' },
+            tip: 'Use the output of steps 4 and 7.' },
           { type: 'interpret', title: 'A model report',
-            md: 'Two leaves were excluded: one was torn and not counted, and one count of 1980 mm⁻², about ten times any other, was most likely a typing error. Sun leaves had a higher mean stomatal density (206.0 ± 25.7 mm⁻², n = 11) than shade leaves (182.5 ± 19.3 mm⁻², n = 11). The standard deviations were similar, so a standard t-test was used (H₀: no difference in mean stomatal density between sun and shade leaves; H₁: a difference): the difference was significant (t = 2.42, df = 20, p = 0.025), and the null hypothesis was rejected. More light on the sunny side may favour more stomata for gas exchange, but the leaves also differed in temperature and humidity, so the cause is not shown.' },
+            md: 'Two leaves were excluded: one was torn and not counted, and one count of 1980 mm⁻², about ten times any other, was most likely a typing error. Sun leaves had a higher mean stomatal density (206.0 ± 25.7 mm⁻², n = 11) than shade leaves (182.5 ± 19.3 mm⁻², n = 11). Each group, checked on its own, was roughly normal, so Welch’s t-test was used (H₀: no difference in mean stomatal density between sun and shade leaves; H₁: a difference): the difference was significant (t = 2.42, df = 18.5, p = 0.026), and the null hypothesis was rejected. More light on the sunny side may favour more stomata for gas exchange, but the leaves also differed in temperature and humidity, so the cause is not shown.' },
           { type: 'frames', items: [
             '___ leaves were excluded because ___.',
             '___ leaves had a higher mean stomatal density (___ ± ___ mm⁻², n = ___) than ___ leaves (___ ± ___ mm⁻², n = ___).',
-            'The difference was significant (t = ___, df = ___, p = ___), so the null hypothesis was rejected.'
+            'Each group was roughly normal when checked on its own, so Welch’s t-test was used.',
+            'The difference was significant (Welch’s t-test: t = ___, df = ___, p = ___), so the null hypothesis was rejected.'
           ] }
         ] },
 
