@@ -98,7 +98,7 @@ Year 8: the three steps. Never "unlikely to come from chance".
 ## Files
     index.html            the three doors, the showcase, and how R runs here
     ks3.html · ib.html · starch.html   one course each (the same shell)
-    css/app.css           the one stylesheet (Daniel's KS3 colours)
+    css/app.css           the one stylesheet (Daniel's KS3 colours; violet only for extension, `tools/one-violet.mjs`)
     js/core.js            LR.h · LR.md · LR.store · LR.on/emit
     js/r.js               webR: start, run a student's code, check it, draw
     js/editor.js          the code box (CodeMirror 5, textarea fallback)
@@ -133,7 +133,7 @@ since the choice is right there (`noData` in `js/course.js`, 30 Sep 2026).
 |---|---|---|
 | goal | md | the green "Goal" line at the top of a stage |
 | text · concept · analogy · note | md, title?, files? (note only) | blue = idea; amber = analogy; a note's files:[{href, name, label, size}] are download links |
-| interpret | title, md | violet, closed: "Open after you have tried" |
+| interpret | title, md | slate (the estate's explain colour; violet means extension), closed: "Open after you have tried" |
 | example | code, md?, title? | code to read, not run |
 | frames | items (use `___` for gaps), title? | |
 | exercise | id, task, code (starter), check, solution, hint?, pass, gate?, needsData?, w?, h? | Run / Check / Start again. Code is saved per id. |
@@ -143,7 +143,7 @@ since the choice is right there (`noData` in `js/course.js`, 30 Sep 2026).
 | filltable | id, key (R → [{label, …}]), fields:[{key, label, tol?, options?}], gate?, pass?, tip? | numbers accept e-notation |
 | rquiz | id, key (R → {fieldId: answer or [answers]}), choices (R → [..]), fields:[{id, label, extra?}], gate? | |
 | dataset | id, gate | the KS3 chooser: sample class or upload |
-| extension | title, md?, blocks | dashed box; never gate inside it |
+| extension | title, md?, blocks | violet dashed box (the estate's one extension violet, `--ext`, since 27 Nov 2026); never gate inside it |
 | builder | id, vars (R → [{v,t}]), group?, md? | the plot builder |
 | story | id, title, steps | click-by-click animation (see js/story.js) |
 

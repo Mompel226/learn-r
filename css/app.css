@@ -1,8 +1,11 @@
 /* ============================================================
    Learn R — one look for every course. The colours of the blocks are
    the ones Daniel chose for his KS3 tutorial (tutorial_master.css):
-   blue = an idea, amber = your turn, violet = what it means,
-   green = the goal, red = a check. Type is the estate's:
+   blue = an idea, amber = your turn, green = the goal, red = a check.
+   Violet means only extension, as on every site (Daniel, 10 Nov 2026,
+   "One violet"; here since 27 Nov 2026): the extension box wears the
+   estate's --ext violet, and "what it means", violet in his tutorial,
+   is the estate's explain slate (the Plants Lab's "?" mark). Type is the estate's:
    Fraunces (headings) · Inter (text) · IBM Plex Mono (code).
    ============================================================ */
 :root {
@@ -11,7 +14,8 @@
   --r: #1F5FAD; --r-2: #174A87; --r-wash: #EAF2FC;
   --blue-bg: #EFF6FF; --blue-edge: #BFDBFE; --blue-ink: #1D4ED8;
   --amber-bg: #FFFBEB; --amber-edge: #FDE68A; --amber-ink: #92400E;
-  --violet-bg: #F5F3FF; --violet-edge: #DDD6FE; --violet-ink: #5B21B6;
+  --slate-bg: #F1F5F9; --slate-edge: #CBD5E1; --slate-ink: #4A5A6A;
+  --ext: #7243C0; --ext-wash: #F7F4FD; --ext-rule: #C9BAEE;   /* the one extension violet of every site (memory level-colours-never-blank) */
   --green: #166534; --green-bg: #ECFDF3; --green-edge: #A7F3D0;
   --red: #B42318; --red-bg: #FEF2F2; --red-edge: #FECACA;
   --code-bg: #0F1B26; --code-ink: #E6EDF3;
@@ -103,17 +107,17 @@ a.side__a:hover { background: #F3F4F6; }
 .blk--note { background: #FAFAFB; box-shadow: none; }
 .blk--example pre.code, pre.code { margin: 0 0 8px; padding: 12px 14px; background: var(--code-bg); color: var(--code-ink); border-radius: 10px; overflow-x: auto; font: 500 .9rem/1.55 var(--mono); }
 pre.code code { background: none; border: 0; padding: 0; color: inherit; }
-.blk--interpret { background: var(--violet-bg); border-color: var(--violet-edge); }
+.blk--interpret { background: var(--slate-bg); border-color: var(--slate-edge); }
 .blk--interpret summary { min-height: 40px; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; list-style: none; }
 .blk--interpret summary::-webkit-details-marker { display: none; }
-.blk--interpret summary .blk__k { margin: 0; color: var(--violet-ink); }
-.blk--interpret summary::before { content: '▸'; color: var(--violet-ink); }
+.blk--interpret summary .blk__k { margin: 0; color: var(--slate-ink); }
+.blk--interpret summary::before { content: '▸'; color: var(--slate-ink); }
 .blk--interpret[open] summary::before { content: '▾'; }
 .blk__open { font-size: .85rem; color: var(--ink-3); }
 .blk--interpret[open] .blk__open { display: none; }
 .blk--interpret .prose { margin-top: 10px; }
-.blk--ext { background: #F8FAFC; border: 1.5px dashed #94A3B8; box-shadow: none; }
-.blk--ext .blk__k { color: #475569; }
+.blk--ext { background: var(--ext-wash); border: 1.5px dashed var(--ext-rule); box-shadow: none; }
+.blk--ext > .blk__k { color: var(--ext); }   /* its own label only: a box inside keeps its own colours */
 .blk--ext > .blk { margin-top: 12px; }
 .blk--frames .frames { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .frames li { padding: 8px 12px; border-left: 3px solid var(--r); background: var(--r-wash); border-radius: 0 8px 8px 0; }
@@ -300,7 +304,7 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 .st-card--green { fill: #ECFDF3; stroke: #86EFAC; }
 .st-card--red { fill: #FEF2F2; stroke: #FCA5A5; }
 .st-card--amber { fill: #FFFBEB; stroke: #FCD34D; }
-.st-card--violet { fill: #F5F3FF; stroke: #C4B5FD; }
+.st-card--slate { fill: #F1F5F9; stroke: #94A3B8; }   /* "what it means" cards: the explain slate (violet means extension) */
 .st-box { fill: #EAF2FC; stroke: var(--r-2); stroke-width: 1.8; }
 .st-wh { stroke: var(--r-2); stroke-width: 1.8; }
 .st-err { stroke: var(--ink); stroke-width: 2; }
@@ -311,7 +315,7 @@ table.dt--fill input, table.dt--fill select { width: 8.5em; min-height: 36px; te
 .st-fit { stroke: #C2410C; stroke-width: 2.6; }
 .st-sq-both { fill: #0E7A66; }
 .st-sq-moss { fill: #9FD8B5; }
-.st-sq-heather { fill: #B794D6; }
+.st-sq-heather { fill: #B794D6; }   /* heather's own flower colour: a drawing keeps its biology colour (one-violet.mjs allows it) */
 .st-sq-neither { fill: #E5E7EB; }
 .st-fulcrum { fill: #E8A33D; stroke: #9A5B0B; stroke-width: 1.2; }
 .st-arrow { stroke: var(--ink-2); stroke-width: 1.6; fill: none; }

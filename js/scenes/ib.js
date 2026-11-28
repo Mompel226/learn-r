@@ -244,7 +244,7 @@
     }
     function cond(x, head, body, cls) { return card(S, x, 284, 196, 70, cls) + S.text(x + 10, 302, head, { cls: 'st-lab', anchor: 'start' }) + lines(S, x + 10, 320, body, { cls: 'st-small', anchor: 'start' }, 15); }
     return '' +
-      S.g('q', card(S, 200, 10, 240, 44, 'st-card--violet') + S.text(320, 38, 'What kind of data do you have?', { cls: 'st-lab' })) +
+      S.g('q', card(S, 200, 10, 240, 44, 'st-card--slate') + S.text(320, 38, 'What kind of data do you have?', { cls: 'st-lab' })) +
       S.g('arrows', arrow(S, 280, 56, 116, 94) + arrow(S, 320, 56, 320, 94) + arrow(S, 360, 56, 526, 94)) +
       S.g('b1', col(18, ['Counts in', 'categories'], 'present or absent', 'χ² test', ['heather and moss', 'in 100 quadrats'], 'st-card--green')) +
       S.g('b2', col(222, ['One measurement,', 'two groups'], 'a number for each', 't-test', ['resting heart rate:', 'train v do not train'], 'st-card--blue')) +
@@ -282,7 +282,7 @@
         S.text(tx(-2.024), tT + 52, '−2.02', { cls: 'st-lab', fill: '#B42318' }) + S.text(tx(2.024), tT + 52, '2.02', { cls: 'st-lab', fill: '#B42318' }) + S.text(340, tT - 14, 'beyond ± 2.02: less than 5 % of the time', { cls: 'st-lab', fill: '#B42318' })) +
       S.g('tmark', S.line(tx(2.523), tB, tx(2.523), tT + 10, 'st-hot') + '<circle cx="' + tx(2.523) + '" cy="' + (tT + 10) + '" r="5" class="st-dot st-dot--hot"/>' +
         S.rect(tx(2.523) - 8, tT - 2 - 50, 136, 30, 'st-pill', 15) + S.text(tx(2.523) + 60, tT - 32, 't = 2.52, p = 0.016', { cls: 'st-t', weight: 700 })) +
-      S.g('concl', card(S, 16, 4, 460, 58, 'st-card--violet') + lines(S, 246, 27, ['Students who train had a lower mean resting heart rate.', 'The test cannot say why: the students chose their groups.'], { cls: 'st-t' }, 20));
+      S.g('concl', card(S, 16, 4, 460, 58, 'st-card--slate') + lines(S, 246, 27, ['Students who train had a lower mean resting heart rate.', 'The test cannot say why: the students chose their groups.'], { cls: 'st-t' }, 20));
   };
 
   /* ============ stage 9 · χ²: heather and moss ============ */
@@ -324,7 +324,7 @@
         lines(S, lx(3.84) + 6, lY - 88, ['critical value 3.84', '(df = 1, p = 0.05)'], { cls: 'st-lab', anchor: 'start', fill: '#B42318' }, 15) + S.text(lx(0) + 4, lY + 44, 'Value of χ²', { cls: 'st-lab', anchor: 'start' }) +
         S.line(lx(42.4), lY, lx(42.4), lY - 78, 'st-hot') + '<circle cx="' + lx(42.4) + '" cy="' + (lY - 78) + '" r="5" class="st-dot st-dot--hot"/>' + S.text(lx(42.4) - 8, lY - 96, 'our χ² = 42.4', { cls: 'st-h', anchor: 'end' })) +
       S.g('dir', card(S, 145, 252, 350, 94, 'st-card--green') + lines(S, 320, 274, ['Both species: 57 observed, 42.2 expected.', 'O > E: a positive association. They grow', 'together more often than chance predicts.'], { cls: 'st-t' }, 22)) +
-      S.g('cause', card(S, 145, 14, 350, 76, 'st-card--violet') + lines(S, 320, 38, ['An association, not a cause. Heather may', 'shelter the moss, or both may avoid', 'the trampled paths.'], { cls: 'st-t' }, 19));
+      S.g('cause', card(S, 145, 14, 350, 76, 'st-card--slate') + lines(S, 320, 38, ['An association, not a cause. Heather may', 'shelter the moss, or both may avoid', 'the trampled paths.'], { cls: 'st-t' }, 19));
   };
 
   /* ============ stage 10 · correlation and R² ============ */
@@ -346,6 +346,6 @@
       S.g('r2', card(S, 380, 78, 240, 62, 'st-card--blue') + S.rect(392, 106, 54, 18, 'st-bar st-bar--t', 3) + S.rect(446, 106, 162, 18, 'st-bar st-bar--grey', 3) +
         S.text(500, 97, 'R² = 0.25', { cls: 'st-lab' }) + S.text(419, 136, '25 %', { cls: 'st-small' }) + S.text(527, 136, '75 %: other things', { cls: 'st-small' })) +
       S.g('sig', S.rect(96, 18, 190, 30, 'st-pill', 15) + S.text(191, 38, 'p = 0.0009 < 0.05', { cls: 'st-t', weight: 700 })) +
-      S.g('cause', card(S, 100, 150, 440, 64, 'st-card--violet') + lines(S, 320, 176, ['A correlation, not a cause: students who exercise', 'more may also sleep, eat or rest differently.'], { cls: 'st-t' }, 20));
+      S.g('cause', card(S, 100, 150, 440, 64, 'st-card--slate') + lines(S, 320, 176, ['A correlation, not a cause: students who exercise', 'more may also sleep, eat or rest differently.'], { cls: 'st-t' }, 20));
   };
 })(window.LR);
